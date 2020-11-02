@@ -1,0 +1,45 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="layui-tab layui-card">
+    <ul class="layui-tab-title">
+        <li class="layui-this">
+            <a href="{:url('storage/index')}">{:lang('ADMIN_STORAGE_INDEX')}</a></li>
+    </ul>
+    <div class="layui-tab-content">
+        <form method="post" class="layui-form js-ajax-form"
+              action="{:url('storage/settingPost')}">
+            <div class="layui-form-item">
+                <label class="layui-form-label">存储类型</label>
+                <div class="layui-input-inline">
+                    <select  name="type" id="input-type">
+                        <foreach name="storages" item="vo">
+                            <php>$type_selected=isset($type)&&$type==$key?"selected":"";</php>
+                            <option value="{$key}" {$type_selected}>{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit"  class="layui-btn js-ajax-submit" data-refresh="0">
+                        {:lang('SAVE')}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<include file="public@footer"/>
+</body>
+</html>

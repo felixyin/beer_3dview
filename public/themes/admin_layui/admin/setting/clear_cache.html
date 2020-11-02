@@ -1,0 +1,40 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md-offset3 layui-col-md6">
+            <div class="layui-card" style="margin-top: 10%">
+                <div class="layui-card-header">{:lang('CACHE_CLEARED')}</div>
+                <div class="layui-card-body">
+                    <div style="line-height: 60px;">
+                        {:lang('CACHE_CLEARED')}
+                    </div>
+                    <div class="layui-form-item clearfix">
+                        <a href="javascript:layuimini.closeCurrentTab();"
+                           class="layui-btn pull-right">
+                            {:lang('CLOSE')}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<script>
+    $(function () {
+        //执行layuimini设置的清理sessionStorage.clear();
+        sessionStorage.clear();
+    });
+</script>
+</body>
+</html>

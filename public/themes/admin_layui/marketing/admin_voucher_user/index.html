@@ -1,0 +1,96 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">优惠券使用列表</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('AdminVoucherUser/index')}">
+        <div class="layui-inline">
+            商品名称:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="name" style="width: 200px;"
+                       value="{$param['name']|default=''}" placeholder="请输入商品名称...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('AdminVoucherUser/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="50">序号</th>
+                <th width="100">客户</th>
+                <th width="100">商品名称</th>
+                <th width="50">金额</th>
+                <th width="50">优惠金额</th>
+                <th width="50">是否使用</th>
+                <th width="100">领取/使用时间</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td><b>{$key+1}</b></td>
+                    <td style="text-align: left">
+                        <empty name="$vo.getuser.user_name">
+                            {$vo.getuser.user_nickname}
+                            <else />
+                            {$vo.getuser.user_name}
+                        </empty>
+                    </td>
+                    <td style="text-align: left">{$vo.getdiscountsneeds.getneeds.title}</td>
+                    <td>{$vo.getdiscountsneeds.getneeds.price}</td>
+                    <td>
+                        {$vo.getdiscountsneeds.getdiscounts.num}
+                    </td>
+                    <td>
+                        <if condition="$vo['end_time'] gt time()">
+                            {$vo.status_fix}
+                            <else />
+                            <span class='layui-btn layui-btn-xs layui-btn-warm'> 已过期 </span>
+                        </if>
+                    </td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        <empty name="$vo.use_time">
+                            -
+                            <else />
+                            {:date('Y-m-d H:i:s',$vo.use_time)}
+                        </empty>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+</body>
+</html>

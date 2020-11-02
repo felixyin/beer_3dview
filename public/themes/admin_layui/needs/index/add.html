@@ -1,0 +1,201 @@
+<include file="public@header2"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('Index/index')}" style="color: #333">商品管理</a></li>
+        <li class="active"><a href="{:url('Index/add')}">
+            <empty name="$data['id']">
+                添加商品
+                <else />
+                编辑商品
+            </empty>
+
+        </a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-1">
+<!--            <div class="list-group">-->
+<!--                <a class="list-group-item" href="#A" data-toggle="tab">基本属性</a>-->
+<!--                <a class="list-group-item" href="#B" data-toggle="tab">SEO设置</a>-->
+<!--                <a class="list-group-item" href="#C" data-toggle="tab">模板设置</a>-->
+<!--            </div>-->
+        </div>
+        <div class="col-md-8">
+<!--            js-ajax-form-->
+            <form class="js-ajax-form" action="{:url('Index/addpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-thumbnail"><span class="form-required">*</span> 缩略图</label>
+                            <div  class="col-md-12" >
+                                <div style="text-align: center;" id="input-thumbnail">
+                                    <input type="hidden" name="thumbnail" id="thumbnail" value="{$data['thumbnail']|default=''}">
+                                    <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                        <empty name="$data['thumbnail']">
+                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png" id="thumbnail-preview" width="170" height="150" style="cursor: pointer"/>
+                                            <else />
+                                            <img src="{$data['thumbnail']}" id="thumbnail-preview" width="170" height="150" style="cursor: pointer"/>
+                                        </empty>
+                                    </a>
+                                    <input type="button" class="btn btn-sm btn-cancel-avatar" value="取消图片">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-specimen_image"><span class="form-required">*</span> 样品图 </label>
+                            <div  class="col-md-12" >
+                                <div style="text-align: center;" id="input-specimen_image">
+                                    <input type="hidden" name="specimen_image" id="specimen_image" value="{$data['specimen_image']|default=''}">
+                                    <a href="javascript:uploadOneImage('图片上传','#specimen_image');">
+                                        <empty name="$data['background_image']">
+                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png" id="specimen_image-preview" width="336" height="160" style="cursor: pointer"/>
+                                            <else />
+                                            <img src="{$data['specimen_image']}" id="specimen_image-preview" width="336" height="160" style="cursor: pointer"/>
+                                        </empty>
+                                    </a>
+                                    <input type="button" class="btn btn-sm btn-cancel-avatar" value="取消图片">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-background_image"><span class="form-required">*</span> 合成底图 </label>
+                            <div  class="col-md-12" >
+                                <div style="text-align: center;" id="input-background_image">
+                                    <input type="hidden" name="background_image" id="background_image" value="{$data['background_image']|default=''}">
+                                    <a href="javascript:uploadOneImage('图片上传','#background_image');">
+                                        <empty name="$data['background_image']">
+                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png" id="background_image-preview" width="336" height="160" style="cursor: pointer"/>
+                                            <else />
+                                            <img src="{$data['background_image']}" id="background_image-preview" width="336" height="160" style="cursor: pointer"/>
+                                        </empty>
+                                    </a>
+                                    <input type="button" class="btn btn-sm btn-cancel-avatar" value="取消图片">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name"><span class="form-required">*</span>标题</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" name="title" value="{$data['title']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-cat"><span class="form-required">*</span>  分类 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-cat" name="cat_id">
+                                    <foreach name="cat" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['cat_id']) echo 'selected'; ?> > {$vo.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+
+<!--                        <div class="form-group">-->
+<!--                            <label class="col-md-12" style="padding-top: 10px;" for="input-ml"><span class="form-required">*</span>  容量 </label>-->
+<!--                            <div class="col-md-12">-->
+<!--                                <select  class="form-control" id="input-ml" name="cat_id">-->
+<!--                                    <foreach name="ml" item="vo">-->
+<!--                                        <option value="{$vo.id}" > {$vo.name} ml</option>-->
+<!--                                    </foreach>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-ml"><span class="form-required">*</span>  容量 </label>
+                            <div class="col-md-12">
+                                <foreach name="ml" item="item">
+                                    <span style="padding: 0px 5px 0px 2px">
+                                        <input type="checkbox" name="ml[]" value="{$item.id}" <?php if($item['check']==1) echo 'checked'; ?> > {$item.name}  {$item.unit}
+                                    </span>
+                                </foreach>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-price"><span class="form-required">*</span>单价</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-price" name="price" value="{$data['price']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-num"><span class="form-required">*</span>起订基数 / 单位</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control text-right" id="input-num" name="num" value="{$data['num']|default=''}">
+                            </div>
+                            <div class="col-md-9">
+                                <select  class="form-control" id="input-unit_id" name="unit_id">
+                                    <foreach name="unit" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['unit_id']) echo 'selected'; ?> > ({$vo.name})</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-type"><span class="form-required">*</span>  类型 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-type" name="type">
+                                    <option value="1" <?php if($data['type']==1) echo 'selected'; ?> > 文字 </option>
+                                    <option value="2" <?php if($data['type']==2) echo 'selected'; ?> > 图文 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-type"><span class="form-required">*</span>  状态 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-status" name="status">
+                                    <option value="1" <?php if($data['status']==1) echo 'selected'; ?> > 显示 </option>
+                                    <option value="2" <?php if($data['status']==2) echo 'selected'; ?> > 下架 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+
+                    </div>
+                </div>
+                <div class="form-group col-md-12" style="margin: 20px 20%;">
+<!--                    js-ajax-submit-->
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+                    <a class="btn btn-default" href="{:url('Index/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var user_id = $('#user_obj').val();
+        if (user_id == 0){
+            $('#issuer').show();
+            $('#mobile').show();
+        }else{
+            $('#issuer').hide();
+            $('#mobile').hide();
+        }
+    })
+    $('#user_obj').change(function () {
+        var user_id = $('#user_obj').val();
+        if (user_id == 0){
+            $('#issuer').show();
+            $('#mobile').show();
+        }else{
+            $('#issuer').hide();
+            $('#mobile').hide();
+        }
+    })
+</script>
+</body>
+</html>

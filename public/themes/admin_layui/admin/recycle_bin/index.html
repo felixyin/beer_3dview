@@ -1,0 +1,54 @@
+<include file="public@header" />
+</head>
+<body>
+<div class="layui-tab layui-card">
+    <ul class="layui-tab-title">
+        <li class="layui-this"><a href="javascript:">回收站列表</a></li>
+    </ul>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th width="50">ID</th>
+            <th>内容名称</th>
+            <th>内容类型</th>
+            <th>删除时间</th>
+            <th>操作人</th>
+            <th width="130">{:lang('ACTIONS')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="list" item="vo">
+            <tr>
+                <td>{$vo.id}</td>
+                <td>{$vo.name}</td>
+                <td>
+                    {:lang('TABLE_'.strtoupper($vo['table_name']))}
+                </td>
+                <td> {:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                <td> {:$vo.user.user_login}</td>
+                <td>
+                    <a href="{:url('RecycleBin/restore',array('id'=>$vo['id']))}"
+                       class="layui-btn layui-btn-xs layui-btn-normal js-ajax-dialog-btn"
+                       data-msg="确定要还原吗？">还原</a>
+                    <a href="{:url('RecycleBin/delete2',array('id'=>$vo['id']))}" class="layui-btn layui-btn-xs layui-btn-danger js-ajax-delete">{:lang('DELETE')}</a>
+                </td>
+            </tr>
+        </foreach>
+        </tbody> 
+    </table>
+    <form id="_page_form" action="{:url('RecycleBin/index')}">
+        <input type="hidden" id="page" name="page" value="1">
+        <div id="pagination"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+<script>
+
+    $(function () {
+        //设置分页
+        getpageinfo('<?php echo json_encode($list) ?>','pagination');
+    });
+</script>
+
+</body>
+</html>

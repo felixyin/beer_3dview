@@ -1,0 +1,223 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+
+    table {
+        width: 100%;
+        float: left;
+        table-layout:fixed;
+        width:500px;
+        border:1px solid #ccc;
+    }
+
+    table tr {
+        line-height: 15px;
+        border:1px solid #ccc;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        overflow:hidden;
+    }
+    /*.MHover{*/
+    /*    border:1px solid #ccc;*/
+    /*    white-space:nowrap;*/
+    /*    text-overflow:ellipsis;*/
+    /*    overflow:hidden;*/
+    /*}*/
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">公众号菜单管理</a></li>
+            <li><a href="{:url('Index/parentadd')}">添加一级菜单</a></li>
+<!--            <li>-->
+<!--                <a class="js-ajax-dialog-btn" style="color: #ff6666" data-msg="确定更新菜单吗？" href="{:url('Index/setMenu')}">更新公众号菜单&nbsp;</a>-->
+<!--            </li>-->
+        </ul>
+    </div>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table"  style="cursor: pointer;">
+            <thead>
+            <tr>
+                <th width="100">父菜单名称</th>
+                <th width="100">菜单名称</th>
+                <th width="80">按钮类型</th>
+                <th style="min-width: 300px">网页跳转地址</th>
+                <th width="180">跳转小程序页码</th>
+                <th width="200">
+                    操作&nbsp;&nbsp;
+                    <a class="layui-btn layui-btn-xs layui-btn-warm js-ajax-dialog-btn" data-msg="确定更新菜单吗？" href="{:url('Index/setmenu')}">更新菜单</a>
+                </th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td>
+                        <if condition="($vo['parent_id']==0)">
+                                一级菜单
+                        </if>
+                    </td>
+                    <td>{$vo.name} </td>
+                    <td>
+                        <if condition="($vo.type == 'miniprogram')">
+                            跳转小程序
+                            <elseif condition="($vo.type == 'view')"/>
+                            跳转页面
+                        </if>
+                    </td>
+                    <td>{$vo.url} </td>
+                    <td>{$vo.pagepath}</td>
+                    <td style="text-align: left">
+                        <a class="layui-btn layui-btn-xs" href="{:url('Index/edit',array('id'=>$vo['id'],'parent_id'=>$vo['parent_id']))}">编 辑</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" data-msg="确定下架吗？" href="{:url('Index/delete',array('id'=>$vo['id']))}">删 除</a>
+                        <if condition="($vo.parent_id == 0)">
+                            <a class="layui-btn layui-btn-xs layui-btn-normal" href="{:url('Index/add',array('parent_id'=>$vo['id'],'name'=>$vo['name']))}">添加子菜单</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+<script>
+    var selectedcount = 0;//用户选中项数量
+    layui.use(['form','jquery','laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start_time' //指定元素
+            ,type:'datetime'
+        });
+        laydate.render({
+            elem: '#end_time' //指定元素
+            ,type:'datetime'
+        });
+        //全选或反选
+        form.on('checkbox(allChoose)',function (data) {
+            $("input[name='ids[]']").each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        //有一个未选中则为未选状态;全部选中后,则为选中状态return false;//跳出循环
+        form.on('checkbox(myids)',function (data) {
+            var items = $("input[name='ids[]']");//获取所有行的checkbox
+            var all = items.length;//总行数
+            var sum   = 0;//用户选中项数量
+            items.each(function (index, item) {
+                if(item.checked){
+                    sum += 1;
+                }
+            });
+
+            selectedcount = sum;
+            $('#checkall').prop('checked',sum >= all ? true : false);
+            form.render('checkbox');
+        });
+        //
+
+
+    });
+
+
+
+
+
+
+</script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

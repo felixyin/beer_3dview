@@ -1,0 +1,117 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">发票管理</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('Index/index')}">
+        <div class="layui-inline">
+            发票单号or公司名称:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="search" style="width: 200px;"
+                       value="{$param['search']|default=''}" placeholder="请输入发票单号,公司名称...">
+            </div>
+            发票:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="status" style="width: 140px;">
+                    <option <?php if($param['status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['status']==1) echo 'selected'; ?> value='1'>未开发票</option>
+                    <option <?php if($param['status']==2) echo 'selected'; ?> value='2'>已开发票</option>
+                </select>
+            </div>&nbsp;
+            领取状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="get_status" style="width: 140px;">
+                    <option <?php if($param['get_status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['get_status']==1) echo 'selected'; ?> value='1'>领取</option>
+                    <option <?php if($param['get_status']==2) echo 'selected'; ?> value='2'>未领取</option>
+                </select>
+            </div>&nbsp;
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('Index/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="100">发票单号</th>
+                <th width="100">公司名称</th>
+                <th width="50">发票金额</th>
+                <th width="50">发票状态</th>
+                <th width="100">创建/开票/领取时间</th>
+                <th width="50">领取状态</th>
+                <th width="50">领取人</th>
+                <th width="50">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td>{$vo.invoice_num}</td>
+                    <td>{$vo.getinvoice.company}</td>
+                    <td>{$vo.invoice_money}</td>
+                    <td>{$vo.status_fix}</td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        <empty name="$vo.update_time">
+                            -
+                            <else />
+                            {:date('Y-m-d H:i:s',$vo.update_time)}
+                        </empty>
+                        <br>
+                        <empty name="$vo.get_time">
+                            -
+                        <else />
+                            {:date('Y-m-d H:i:s',$vo.get_time)}
+                        </empty>
+                    </td>
+                    <td>{$vo.get_status_fix}</td>
+                    <td>{$vo.get_user_name}</td>
+                    <td>
+                        <if condition="($vo['status'] == 1) ">
+                            <a class="layui-btn layui-btn-xs" style="margin-bottom: 10px;" href="{:url('Index/add',array('id'=>$vo['id']))}">上传发票</a>
+                            <br>
+                            <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;">领取发票</a>
+                            <elseif condition="$vo['status'] eq 2"/>
+                            <a class="layui-btn layui-btn-xs layui-btn-normal" style="margin-bottom: 10px;" href="{:url('Index/add',array('id'=>$vo['id']))}">发票信息</a>
+                            <br>
+                            <a class="layui-btn layui-btn-xs layui-btn-warm" href="{:url('Index/getadd',array('id'=>$vo['id']))}">领取发票</a>
+                        </if>
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+</body>
+</html>

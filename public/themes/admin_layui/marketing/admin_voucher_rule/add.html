@@ -1,0 +1,177 @@
+<include file="public@header2"/>
+
+<style>
+    .dowebok { width: 400px; margin: 100px auto;}
+</style>
+<script type="text/html" id="photos-item-tpl">
+    <li id="saved-image{id}" class="col-sm-2 file image_list">
+        <div class="file-name text-center" style="padding:0px;">
+            <a class="btn btn-xs btn-link text-left" href="javascript:;" onclick="moveleft(this)"><i class="fa fa-arrow-left"></i></a>
+            <a class="btn btn-xs btn-link text-right" href="javascript:;" onclick="moveright(this)"><i class="fa fa-arrow-right"></i></a>
+        </div>
+        <input id="photo-{id}" type="hidden" name="photo_urls[]" value="{filepath}">
+        <!--        <input id="photo-{id}-name" type="hidden" name="photo_names[]" value="{name}" style="width: 200px;" title="图片名称">-->
+        <div class="image">
+            <img id="photo-{id}-preview" class="img-responsive" src="{url}" style="height:140px;">
+        </div>
+        <div class="file-name text-right">
+            <a href="javascript:uploadOneImage('图片上传','#photo-{id}');">替换</a>
+            <a href="javascript:(function(){$('#saved-image{id}').remove();})();">移除</a>
+        </div>
+    </li>
+</script>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminVoucherRule/index')}" style="color: #333">优惠券规则列表</a></li>
+        <li class="active">
+            <a href="javascript:;">
+                <empty name="$data['id']">
+                    添加优惠券规则
+                <else />
+                    编辑优惠券规则
+                </empty>
+            </a>
+        </li>
+    </ul>
+    <div class="row margin-top-20">
+<!--        <div class="col-md-1">-->
+<!--        </div>-->
+        <div class="col-md-9 col-md-offset-1" >
+            <!--            js-ajax-form-->
+            <form class="js-ajax-form" action="{:url('AdminVoucherRule/addpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+<!--                        <div class="form-group">-->
+<!--                            <label class="col-md-12" for="input-thumbnail"><span class="form-required">*</span> 缩略图</label>-->
+<!--                            <div  class="col-md-12" >-->
+<!--                                <div style="text-align: center;" id="input-thumbnail">-->
+<!--                                    <input type="hidden" name="thumbnail" id="thumbnail" value="{$data['thumbnail']|default=''}">-->
+<!--                                    <a href="javascript:uploadOneImage('图片上传','#thumbnail');">-->
+<!--                                        <empty name="$data['thumbnail']">-->
+<!--                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png" id="thumbnail-preview" width="240" height="160" style="cursor: pointer"/>-->
+<!--                                            <else />-->
+<!--                                            <img src="{$data['thumbnail']}" id="thumbnail-preview" width="240" height="160" style="cursor: pointer"/>-->
+<!--                                        </empty>-->
+<!--                                    </a>-->
+<!--                                    <input type="button" class="btn btn-sm btn-cancel-avatar" value="取消图片">-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-name"><span class="form-required">*</span> 规则名称 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" name="name" value="{$data['name']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-money"><span class="form-required">*</span> 条件金额 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-money" name="money" value="{$data['money']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-discounts"><span class="form-required">*</span> 优惠金额 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-discounts" name="num" value="{$data['num']|default=''}">
+                            </div>
+                        </div>
+
+<!--                        <div class="form-group">-->
+<!--                            <label class="col-md-12" style="padding-top: 10px;" for="input-sort">排序 <span style="font-size: 8px;color: #999;">(选填)</span></label>-->
+<!--                            <div class="col-md-12">-->
+<!--                                <input type="text" class="form-control" id="input-sort" name="list_order" value="{$data['list_order']|default='1000'}">-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-status"><span class="form-required">*</span>  领取方式 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-get_mode" name="get_mode">
+                                    <option value="1" <?php if($data['get_mode']==1) echo 'selected'; ?> > 自动领取 </option>
+                                    <option value="2" <?php if($data['get_mode']==2) echo 'selected'; ?> > 手动领取 </option>
+                                    <option value="2" <?php if($data['get_mode']==3) echo 'selected'; ?> > 兑换码领取 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-status"><span class="form-required">*</span>  适用范围 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-status" name="status">
+                                    <option value="1" <?php if($data['status']==1) echo 'selected'; ?> > 专券 </option>
+                                    <option value="2" <?php if($data['status']==2) echo 'selected'; ?> > 通券 </option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <!--                        <div class="form-group">-->
+<!--                            <label class="col-md-12" for="photos"> 相 册 </label>-->
+<!--                            <div class="col-md-12">-->
+<!--                                <ul id="photos" class="pic-list list-unstyled form-inline" >-->
+<!--                                    <notempty name="$data['images']">-->
+<!--                                        <foreach name="$data['images']" item="vo">-->
+<!--                                            <php>$img_url=cmf_get_image_preview_url($vo);</php>-->
+
+<!--                                            <li id="saved-image{$key}" class="col-sm-2 file image_list">-->
+<!--                                                <div class="file-name text-center" style="padding:0px;">-->
+<!--                                                    <a class="btn btn-xs btn-link text-left" href="javascript:;" onclick="moveleft(this)"><i class="fa fa-arrow-left"></i></a>-->
+<!--                                                    <a class="btn btn-xs btn-link text-right" href="javascript:;" onclick="moveright(this)"><i class="fa fa-arrow-right"></i></a>-->
+<!--                                                </div>-->
+<!--                                                <input id="photo-{$key}" type="hidden" name="photo_urls[]" value="{$img_url}">-->
+<!--                                                &lt;!&ndash;                                                <input id="photo-{$key}-name" type="hidden" name="photo_names[]" value="{$vo['photo_name']}" style="width: 200px;" title="图片名称">&ndash;&gt;-->
+<!--                                                <div class="image">-->
+<!--                                                    <img id="photo-{$key}-preview" class="img-responsive" src="{:cmf_get_image_preview_url($vo)}" style="height:140px;">-->
+<!--                                                </div>-->
+<!--                                                <div class="file-name text-right">-->
+<!--                                                    <a href="javascript:uploadOneImage('图片上传','#photo-{$key}');">替换</a>-->
+<!--                                                    <a href="javascript:(function(){$('#saved-image{$key}').remove();})();">移除</a>-->
+<!--                                                </div>-->
+<!--                                            </li>-->
+<!--                                        </foreach>-->
+<!--                                    </notempty>-->
+<!--                                </ul>-->
+<!--                                <a class="fa fa-picture-o col-sm-2 file_order file" style="font-size: 80px;color: #ccc;border: none;"-->
+<!--                                   href="javascript:uploadMultiImage('图片上传','#photos','photos-item-tpl')">-->
+<!--                                    <p style="font-size: 20px;">点击上传</p>-->
+<!--                                </a>-->
+<!--                            </div>-->
+                            <div style="clear: both;"></div>
+                        </div>
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+
+                    </div>
+                </div>
+                <div class="form-group col-md-12" style="margin: 20px 20%;">
+                    <!--                    js-ajax-submit-->
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+
+                    <a class="btn btn-default" href="{:url('AdminVoucherRule/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<script type="text/javascript">
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#input-start_time' //指定元素
+            ,type:'datetime'
+        });
+        laydate.render({
+            elem: '#input-end_time' //指定元素
+            ,type:'datetime'
+        });
+    });
+</script>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

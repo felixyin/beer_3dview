@@ -1,0 +1,78 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="{:url('theme/index')}">所有模板</a></li>
+            <li><a href="{:url('theme/install')}">安装模板</a></li>
+        </ul>
+    </div>
+    <form method="post" class="layui-form js-ajax-form" style="margin-top: 20px">
+        <php> $status=array("1"=>lang('DISPLAY'),"0"=>lang('HIDDEN'));</php>
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th>模板</th>
+                <th>模板名称</th>
+                <th>版本号</th>
+                <th>语言</th>
+                <th>作者</th>
+                <th>模板描述</th>
+                <th width="250">{:lang('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="themes" item="vo">
+                <tr>
+                    <td>
+                        {$vo.theme}
+                        <eq name="vo.theme" value="$default_theme">
+                            <span class="layui-bg-red">当前启用</span>
+                        </eq>
+                    </td>
+                    <td>{$vo.name}</td>
+                    <td><span class="layui-bg-cyan">{$vo.version}</span></td>
+                    <td>{$vo.lang}</td>
+                    <td>{$vo.author}</td>
+                    <td>{$vo.description}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs"
+                           href="{:url('Theme/design',['theme'=>$vo.theme])}" target="_blank">设计</a>
+                        <a class="layui-btn layui-btn-xs"
+                           href="javascript:openIframeLayer('{:url('theme/files',array('theme'=>$vo['theme']))}','{$vo.name}文件列表',{});">文件列表</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-normal js-ajax-dialog-btn" href="{:url('theme/update',array('theme'=>$vo['theme']))}"
+                           data-msg="确定更新此模板吗？">更新</a>
+                        <if condition="$vo.theme == $default_theme">
+                            <span class="layui-btn layui-btn-xs layui-btn-normal" color="#cccccc">启用</span>
+                            <else/>
+                            <a class="layui-btn layui-btn-xs layui-btn-warm js-ajax-dialog-btn" href="{:url('theme/active',array('theme'=>$vo['theme']))}"
+                               data-msg="确定使用此模板吗？">启用</a>
+                        </if>
+
+                        <if condition="($vo.name == 'simpleboot3') OR ($vo.theme == $default_theme) ">
+                            <span class="layui-btn layui-btn-xs layui-btn-danger">卸载</span>
+                            <else/>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" href="{:url('theme/uninstall',array('theme'=>$vo['theme']))}"
+                               data-msg="您设置的模板数据将被删除，<br>确定卸载此模板吗？">卸载</a>
+                        </if>
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+    </form>
+</div>
+<include file="public@footer"/>
+</body>
+</html>

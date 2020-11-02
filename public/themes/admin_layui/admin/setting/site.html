@@ -1,0 +1,233 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<form class="layui-form js-ajax-form" action="{:url('setting/sitePost')}" method="post" role="form">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{:lang('WEB_SITE_INFOS')}</li>
+            <li>{:lang('SEO_SETTING')}</li>
+            <li>用户注册设置</li>
+            <li>CDN设置</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span  class="form-required">*</span>{:lang('WEBSITE_NAME')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-site-name"
+                               name="options[site_name]" lay-verify="title"
+                               value="{$site_info.site_name|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">后台加密码</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-admin_url_password"
+                               name="admin_settings[admin_password]" lay-verify="title"
+                               value="{$admin_settings.admin_password|default=''}"
+                               id="js-site-admin-url-password">
+                        <p class="help-block">英文字母数字，不能为纯数字</p>
+                        <p class="help-block" style="color: red;">
+                            设置加密码后必须通过以下地址访问后台,请劳记此地址，为了安全，
+                            您也可以定期更换此加密码!</p>
+                        <php>
+                            $root=cmf_get_root();
+                            $root=empty($root)?'':'/'.$root;
+                            $site_domain = cmf_get_domain().$root;
+                        </php>
+                        <p class="help-block">后台登录地址：<span id="js-site-admin-url">{$site_domain}/{$admin_settings.admin_password|default='admin'}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">后台模板</label>
+                    <div class="layui-input-inline">
+                        <php>
+                            $site_admin_theme=empty($admin_settings['admin_theme'])?'':$admin_settings['admin_theme'];
+                        </php>
+                        <select  name="admin_settings[admin_theme]"
+                                 id="input-site_admin_theme">
+                            <foreach name="admin_themes" item="vo">
+                                <php>$admin_theme_selected = $site_admin_theme == $vo ? "selected" : "";</php>
+                                <option value="{$vo}" {$admin_theme_selected}>{$vo}</option>
+                            </foreach>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">{//后台风格}
+                    <label class="layui-form-label">{:lang('WEBSITE_ADMIN_THEME')}</label>
+                    <div class="layui-input-inline">
+                        <php>
+                            $site_admin_style=empty($admin_settings['admin_style'])?cmf_get_admin_style():$admin_settings['admin_style'];
+                        </php>
+                        <select  name="admin_settings[admin_style]"
+                                id="input-site_adminstyle">
+                            <foreach name="admin_styles" item="vo">
+                                <php>$admin_style_selected = $site_admin_style == $vo ? "selected" : "";</php>
+                                <option value="{$vo}" {$admin_style_selected}>{$vo}</option>
+                            </foreach>
+                        </select>
+                    </div>
+                </div>
+                <if condition="APP_DEBUG && false">{//APP_DEBUG && false}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">默认应用</label>
+                        <div class="layui-input-inline">
+                            <php>
+                                $site_default_app=empty($cmf_settings['default_app'])?'demo':$cmf_settings['default_app'];
+                            </php>
+                            <select name="cmf_settings[default_app]"
+                                    id="input-default_app">
+                                <notempty name="apps">
+                                    <foreach name="apps" item="vo">
+                                        <php>$default_app_selected = $site_default_app == $vo ? "selected" : "";
+                                        </php>
+                                        <option value="{$vo}" {$default_app_selected}>{$vo}</option>
+                                    </foreach>
+                                </notempty>
+                            </select>
+                        </div>
+                    </div>
+                </if>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_ICP')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-site_icp"
+                               name="options[site_icp]" lay-verify="title"
+                               value="{$site_info.site_icp|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_GWA')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" lay-verify="title"
+                               id="input-site_gwa" name="options[site_gwa]"
+                               value="{$site_info.site_gwa|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBMASTER_EMAIL')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" lay-verify="title"
+                               id="input-site_admin_email" name="options[site_admin_email]"
+                               value="{$site_info.site_admin_email|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_STATISTICAL_CODE')}</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" id="input-site_analytics" name="options[site_analytics]">{$site_info.site_analytics|default=''}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit"  class="layui-btn js-ajax-submit" data-refresh="1">
+                            {:lang('SAVE')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">{//seo}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_SEO_TITLE')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-site_seo_title"
+                               name="options[site_seo_title]"
+                               value="{$site_info.site_seo_title|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_SEO_KEYWORDS')}</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-site_seo_keywords"
+                               name="options[site_seo_keywords]"
+                               value="{$site_info.site_seo_keywords|default=''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{:lang('WEBSITE_SEO_DESCRIPTION')}</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea"
+                                  id="input-site_seo_description"
+                                  name="options[site_seo_description]">{$site_info.site_seo_description|default=''}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit"  class="layui-btn js-ajax-submit" data-refresh="0">
+                            {:lang('SAVE')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">{//user reg}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户注册验证</label>
+                    <div class="layui-input-inline">
+                        <select name="cmf_settings[open_registration]">
+                            <option value="0">是</option>
+                            <php>
+                                $open_registration_selected =
+                                empty($cmf_settings['open_registration'])?'':'selected';
+                            </php>
+                            <option value="1" {$open_registration_selected}>否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="display: none;">
+                    <label class="layui-form-label">{:lang('SPECAIL_USERNAME')}</label>
+                    <div class="layui-input-block">
+                        <textarea style="height: 60px" class="layui-input" id="input-banned_usernames"
+                                  name="cmf_settings[banned_usernames]">{$cmf_settings.banned_usernames}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit"  class="layui-btn js-ajax-submit" data-refresh="0">
+                            {:lang('SAVE')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">{//cdn}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">静态资源cdn地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="input-cdn_static_root"
+                               name="cdn_settings[cdn_static_root]"
+                               value="{$cdn_settings.cdn_static_root|default=''}">
+                        <p class="help-block">
+                            不能以/结尾；设置这个地址后，请将ThinkCMF下的静态资源文件放在其下面；<br>
+                            ThinkCMF下的静态资源文件大致包含以下(如果你自定义后，请自行增加)：<br>
+                            themes/admin_simplebootx/public/assets<br>
+                            static<br>
+                            themes/simplebootx/public/assets<br>
+                            例如未设置cdn前：jquery的访问地址是/static/js/jquery.js, <br>
+                            设置cdn是后它的访问地址就是：静态资源cdn地址/static/js/jquery.js
+                        </p>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit"  class="layui-btn js-ajax-submit" data-refresh="0">
+                            {:lang('SAVE')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<include file="public@footer"/>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+    "name": "thinkcmf/plugins-instant_message",
+    "description": "ThinkCMF instant_message plugin",
+    "type": "cmf-plugin",
+    "license": "apache2.0",
+    "authors": [
+      {
+        "name": "LSQ",
+        "email": "2545644408@qq.com"
+      }
+    ],
+    "require": {
+    }
+}

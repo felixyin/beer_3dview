@@ -1,0 +1,68 @@
+<include file="public@header2"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('Index/index')}" style="color: #333">公众号菜单管理</a></li>
+        <li class="active"><a href="javascript:;">添加子菜单</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-2">
+<!--            <div class="list-group">-->
+<!--                <a class="list-group-item" href="#A" data-toggle="tab">基本属性</a>-->
+<!--                <a class="list-group-item" href="#B" data-toggle="tab">SEO设置</a>-->
+<!--                <a class="list-group-item" href="#C" data-toggle="tab">模板设置</a>-->
+<!--            </div>-->
+        </div>
+        <div class="col-md-6">
+            <form class="js-ajax-form" action="{:url('Index/addpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <h5>&nbsp;<span style="color: blue;">{$param.name}</span>  &nbsp;添加子菜单</h5>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name"><span class="form-required">*</span>菜单名称</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-name" name="name" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-parent">按钮类型</label>
+                            <div>
+                                <select class="form-control" name="type" id="input-parent">
+                                    <option value="view" >网页跳转</option>
+                                    <option value="miniprogram" >小程序跳转 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name"><span class="form-required">*</span>网页跳转地址</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-alias" name="url" placeholder="例如: https://www.lsqspace.com " value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name">小程序跳转页码</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-alias" name="pagepath" placeholder="例如: /h5/page/index" value="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden"  name="parent_id" value="{$param.parent_id}">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+                    <a class="btn btn-default" href="{:url('Index/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

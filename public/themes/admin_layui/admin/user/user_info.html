@@ -1,0 +1,97 @@
+<include file="public@header" />
+<style>
+	.layui-form-label{
+		width: 150px;
+	}
+	.layui-input-block{
+		margin-left: 180px;
+		width: 50%;
+	}
+</style>
+</head>
+<body>
+<form class="layui-form js-ajax-form" action="{:url('User/userinfoPost')}"
+	  role="form" method="post">
+			<div class="layui-tab layui-card">
+				<div class="layui-tab layui-card">
+					<ul class="layui-tab-title">
+						<li class="layui-this">{:lang('ADMIN_USER_USERINFO')}</li>
+						<li><a href="{:url('setting/password')}">
+							{:lang('ADMIN_SETTING_PASSWORD')}</a></li>
+					</ul>
+				</div>
+				<div class="layui-tab-content">
+					<div class="layui-tab-item layui-show">
+						<div class="layui-form-item">
+							<label class="layui-form-label">
+								{:lang('NICKNAME')}
+							</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input"
+									   id="input-user-nickname" name="user_nickname"
+									   value="{$user_nickname}">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">
+								{:lang('GENDER')}
+							</label>
+							<div class="layui-input-block">
+								<select name="sex" id="input-gender">
+									<php>$sexs=array("0"=>lang('GENDER_SECRECY'),"1"=>lang('MALE'),"2"=>lang('FEMALE'));</php>
+									<foreach name="sexs" item="vo">
+										<php>$sexselected=$key==$sex?"selected":"";</php>
+										<option value="{$key}" {$sexselected}>{$vo}</option>
+									</foreach>
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">
+								{:lang('BIRTHDAY')}
+							</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="input-birthday" name="birthday" value="{:date('Y-m-d',$birthday)}" placeholder="2020-01-04">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">
+								{:lang('WEBSITE')}
+							</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" id="input-user_url" name="user_url" value="{$user_url}">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">
+								{:lang('SIGNATURE')}
+							</label>
+							<div class="layui-input-block">
+								<textarea class="layui-textarea" id="input-signature"
+										  name="signature"
+										  placeholder="{:lang('SIGNATURE')}">{$signature}</textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button type="submit" class="layui-btn js-ajax-submit">
+									{:lang('SAVE')}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+</form>
+
+	<include file="public@footer"/>
+<script>
+	layui.use('laydate', function () {
+		var	laydate = layui.laydate;
+		laydate.render({
+			elem: '#input-birthday' //指定日期元素
+		});
+	});
+</script>
+</body>
+</html>

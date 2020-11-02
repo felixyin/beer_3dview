@@ -1,0 +1,335 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">所有文章</a></li>
+            <li><a href="{:url('AdminArticle/add')}">添加文章</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('AdminArticle/index')}">
+        <div class="layui-inline">
+            分类:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="category" style="width: 140px;">
+                    <option value='0'>全部</option>
+                    {$category_tree|default=''}
+                </select>
+            </div>&nbsp;
+            时间:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="start_time" id="start_time"
+                       value="{$start_time|default=''}"
+                       style="width: 140px;" autocomplete="off">
+            </div>
+            -
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="end_time" id="end_time"
+                       value="{$end_time|default=''}"
+                       style="width: 140px;" autocomplete="off">
+            </div>&nbsp;
+            关键字:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="keyword" style="width: 200px;"
+                       value="{$keyword|default=''}" placeholder="请输入关键字...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('AdminArticle/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <div class="layui-input-inline">
+            <notempty name="category">
+                <button class="layui-btn layui-btn-normal layui-btn-sm js-ajax-submit" type="submit"
+                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
+                </button>
+            </notempty>
+            <button class="layui-btn layui-btn-normal layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布
+            </button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布
+            </button>
+            <button class="layui-btn layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/top',array('yes'=>1))}" data-subcheck="true">置顶
+            </button>
+            <button class="layui-btn layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/top',array('no'=>1))}" data-subcheck="true">取消置顶
+            </button>
+            <button class="layui-btn layui-btn-warm layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/recommend',array('yes'=>1))}" data-subcheck="true">推荐
+            </button>
+            <button class="layui-btn layui-btn-warm layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/recommend',array('no'=>1))}" data-subcheck="true">取消推荐
+            </button>
+
+            <button class="layui-btn layui-btn-danger layui-btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="15">{//layui-form-checked}
+                    <input type="checkbox" id="checkall" name="checkall"
+                           lay-skin="primary" lay-filter="allChoose" value="checkall"/>
+                </th>
+                <notempty name="category">
+                    <th width="50">{:lang('SORT')}</th>
+                </notempty>
+                <th width="40">ID</th>
+                <th style="min-width: 100px">标题</th>
+                <th width="70">分类</th>
+                <th width="50">作者</th>
+                <th width="45">点击量</th>
+                <th width="45">评论量</th>
+                <th width="85">关键字/来源<br>摘要/缩略图</th>
+                <th width="115">发布时间<br>更新时间</th>
+                <th width="50">状态</th>
+                <th width="95">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="articles" item="vo">
+                <tr>
+                    <td>
+                        <input type="checkbox" lay-skin="primary" lay-filter="myids"
+                               class="js-check" name="ids[]"
+                               data-yid="js-check-y" data-xid="js-check-x"
+                               value="{$vo.id}">
+                    </td>
+                    <notempty name="category">
+                        <td>
+                            <input name="list_orders[{$vo.post_category_id}]" class="input-order" type="text"
+                                   value="{$vo.list_order}">
+                        </td>
+                    </notempty>
+                    <td><b>{$vo.id}</b></td>
+                    <td>
+                        <notempty name="category">
+                            <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"
+                               target="_blank">{$vo.post_title}</a>
+                            <else/>
+                            <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id']))}"
+                               target="_blank">{$vo.post_title}</a>
+                        </notempty>
+                    </td>
+                    <td>
+                        <foreach name="vo.categories" item="voo">
+                            <a class="label label-default"
+                               href="{:cmf_url('portal/List/index',array('id'=>$voo['id']))}"
+                               target="_blank"
+                            >{$voo.name}</a>
+                        </foreach>
+                    </td>
+                    <td>{$vo.user_nickname}</td>
+                    <td>{$vo.post_hits|default=0}</td>
+                    <td>
+                        <notempty name="vo.comment_count">
+                            {$vo.comment_count|default='0'}
+                            <else/>
+                            {$vo.comment_count|default='0'}
+                        </notempty>
+                    </td>
+                    <td>
+                        <notempty name="vo.post_keywords">
+                            <i class="fa fa-check fa-fw"></i>
+                            <else/>
+                            <i class="fa fa-close fa-fw"></i>
+                        </notempty>
+                        <notempty name="vo.post_source">
+                            <i class="fa fa-check fa-fw"></i>
+                            <else/>
+                            <i class="fa fa-close fa-fw"></i>
+                        </notempty>
+                        <notempty name="vo.post_excerpt">
+                            <i class="fa fa-check fa-fw"></i>
+                            <else/>
+                            <i class="fa fa-close fa-fw"></i>
+                        </notempty>
+
+                        <notempty name="vo.more.thumbnail">
+                            <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.more.thumbnail)}');">
+                                <i class="fa fa-photo fa-fw"></i>
+                            </a>
+                            <else/>
+                            <i class="fa fa-close fa-fw"></i>
+                        </notempty>
+                    </td>
+                    <td style="padding-top: 0;padding-bottom: 0">
+                        <empty name="vo.published_time">
+                            <span>未发布</span>
+                            <else/>
+                            <span>{:date('Y-m-d H:i',$vo['published_time'])}</span>
+                        </empty><br>
+                        <notempty name="vo.update_time">
+                            {:date('Y-m-d H:i',$vo['update_time'])}
+                        </notempty>
+                    </td>
+                    <td>
+                        <notempty name="vo.post_status">
+                            <a data-toggle="tooltip" title="已发布"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="未发布"><i class="fa fa-close"></i></a>
+                        </notempty>
+                        <notempty name="vo.is_top">
+                            <a data-toggle="tooltip" title="已置顶"><i class="fa fa-arrow-up"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="未置顶"><i class="fa fa-arrow-down"></i></a>
+                        </notempty>
+                        <notempty name="vo.recommended">
+                            <a data-toggle="tooltip" title="已推荐"><i class="fa fa-thumbs-up"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="未推荐"><i class="fa fa-thumbs-down"></i></a>
+                        </notempty>
+                    </td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs"
+                           href="{:url('AdminArticle/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-delete"
+                           href="{:url('AdminArticle/delete',array('id'=>$vo['id']))}">{:lang('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+<script>
+    var selectedcount = 0;//用户选中项数量
+    layui.use(['form','jquery','laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start_time' //指定元素
+            ,type:'datetime'
+        });
+        laydate.render({
+            elem: '#end_time' //指定元素
+            ,type:'datetime'
+        });
+        //全选或反选
+        form.on('checkbox(allChoose)',function (data) {
+            $("input[name='ids[]']").each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        //有一个未选中则为未选状态;全部选中后,则为选中状态return false;//跳出循环
+        form.on('checkbox(myids)',function (data) {
+            var items = $("input[name='ids[]']");//获取所有行的checkbox
+            var all = items.length;//总行数
+            var sum   = 0;//用户选中项数量
+            items.each(function (index, item) {
+                if(item.checked){
+                    sum += 1;
+                }
+            });
+
+            selectedcount = sum;
+            $('#checkall').prop('checked',sum >= all ? true : false);
+            form.render('checkbox');
+        });
+        //
+
+
+    });
+
+
+
+
+
+
+</script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

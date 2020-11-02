@@ -1,0 +1,192 @@
+<include file="public@header2"/>
+
+<style>
+    .dowebok { width: 400px; margin: 100px auto;}
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminVoucherNeeds/index')}" style="color: #333">优惠券应用</a></li>
+        <li class="active">
+            <a href="javascript:;">
+                <empty name="$data['id']">
+                    添加应用优惠券
+                <else />
+                    编辑应用优惠券
+                </empty>
+            </a>
+        </li>
+    </ul>
+    <div class="row margin-top-20">
+<!--        <div class="col-md-1">-->
+<!--        </div>-->
+        <div class="col-md-9 col-md-offset-1" >
+            <!--            js-ajax-form-->
+            <form class="js-ajax-form" action="{:url('AdminVoucherNeeds/addpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-discounts_id"><span class="form-required">*</span>  优惠规则 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-discounts_id" name="discounts_id">
+                                    <foreach name="rule" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['discounts_id']) echo 'selected'; ?> >
+                                        优惠名称 : {$vo.name}, 条件金额 : {$vo.money} 元, 优惠金额 : {$vo.num} 元,
+                                        <if condition="$vo['status'] eq 1">
+                                            专券,
+                                            <elseif condition="$vo['status'] eq 2" />
+                                            通券,
+                                        </if>
+                                        <if condition="$vo['get_mode'] eq 1">
+                                            自动领取
+                                            <elseif condition="$vo['get_mode'] eq 2" />
+                                            手动领取
+                                            <elseif condition="$vo['get_mode'] eq 3" />
+                                            兑换码领取
+                                        </if>
+                                        </option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-cat_id"><span class="form-required">*</span>  商品分类 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" name="cat_id" id="input-cat_id">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-goods_id"><span class="form-required">*</span>  优惠商品 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" name="needs_id" id="input-goods_id">
+
+                                </select>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            $(document).ready(function (e) {
+                                catlist();
+                                goodslist();
+                                $('#input-cat_id').change(function () {
+                                    goodslist();
+                                })
+                            })
+
+                            function catlist(){
+                                var pcode = 0;
+                                var id = {$data['cat_id']};
+                                $.ajax({
+                                    async:false,
+                                    url:"/marketing/admin_voucher_needs/catlist",
+                                    data:{pcode:pcode},
+                                    type:"POST",
+                                    dataType:"JSON",
+                                    success: function(data){
+                                        // console.log(data);
+                                        var str = "<option value='0' disabled>请选择商品分类</option>";
+                                        for(var i=0;i<data.data.length;i++){
+                                            if (data.data[i].id==id){
+                                                str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].name+"</option>";
+                                            }else{
+                                                if (data.data[i].id == 1){
+                                                    str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].name+"</option>";
+                                                }else{
+                                                    str += "<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>";
+                                                }
+                                            }
+                                        }
+                                        $("#input-cat_id").html(str);
+                                    }
+                                })
+                            }
+                            function goodslist(){
+                                var pcode = $("#input-cat_id").val();
+                                var id = {$data['needs_id']};
+                                $.ajax({
+                                    async:false,
+                                    url:"/marketing/admin_voucher_needs/needslist",
+                                    data:{pcode:pcode},
+                                    type:"POST",
+                                    dataType:"JSON",
+                                    success: function(data){
+                                        // console.log(data);
+                                        var str = "<option value='0' disabled>请选择商品</option>";
+                                        for(var i=0;i<data.data.length;i++){
+                                            if (data.data[i].id==id){
+                                                str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].title+"</option>";
+                                            }else{
+                                                str += "<option value='"+data.data[i].id+"'>"+data.data[i].title+"</option>";
+                                            }
+                                        }
+                                        $("#input-goods_id").html(str);
+                                    }
+                                })
+                            }
+                        </script>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-conversion_code"> 兑换码 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-conversion_code" name="conversion_code" value="{$data['conversion_code']|default=''}" placeholder="为6位大写字母,不填则随机生成!">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-start_time"><span class="form-required">*</span>  活动时间 </label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control layui-input" id="input-start_time" name="start_time" value="{:date('Y-m-d H:i:s',$data['start_time'])}" autocomplete="off">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control layui-input" id="input-end_time" name="end_time" value="{:date('Y-m-d H:i:s',$data['end_time'])}" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-status"><span class="form-required">*</span>  发布状态 </label>
+                            <div class="col-md-12">
+                                <select  class="form-control" id="input-status" name="status">
+                                    <option value="1" <?php if($data['status']==1) echo 'selected'; ?> > 开启 </option>
+                                    <option value="2" <?php if($data['status']==2) echo 'selected'; ?> > 禁止 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="clear: both;"></div>
+                        </div>
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+
+                    </div>
+                </div>
+                <div class="form-group col-md-12" style="margin: 20px 20%;">
+                    <!--                    js-ajax-submit-->
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+
+                    <a class="btn btn-default" href="{:url('AdminVoucherNeeds/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<script type="text/javascript">
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#input-start_time' //指定元素
+            ,type:'datetime'
+        });
+        laydate.render({
+            elem: '#input-end_time' //指定元素
+            ,type:'datetime'
+        });
+    });
+</script>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

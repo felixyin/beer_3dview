@@ -1,0 +1,185 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">订单配送</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('Index/logistics')}">
+        <div class="layui-inline">
+            状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="status" style="width: 140px;">
+                    <option <?php if($param['status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['status']==1) echo 'selected'; ?> value='1'>未发货</option>
+                    <option <?php if($param['status']==2) echo 'selected'; ?> value='2'> 发 货 </option>
+                    <option <?php if($param['status']==3) echo 'selected'; ?> value='3'> 完 成 </option>
+                </select>
+            </div>&nbsp;
+            关键字:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="search" style="width: 200px;"
+                       value="{$param['search']|default=''}" placeholder="请输入订单号或商品名称...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('Index/logistics')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="110">订单编号</th>
+                <th width="70">商品名称</th>
+                <th width="70">发货数量</th>
+                <th width="150">收/寄信息</th>
+                <th width="60">订单类型</th>
+                <th width="70">当前状态</th>
+                <th width="130">下单/操作时间</th>
+                <th width="60">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td style="cursor: pointer;">{$vo.order_id}</td>
+                    <td title="{$vo.getneedsdeal.getneeds.title}" style="cursor: pointer;">{$vo.getneedsdeal.getneeds.title}</td>
+                    <td>
+                        {$vo.num}
+                        <br>
+                        {$vo.getneedsdeal.getneeds.getunit.name}
+                        <br>
+                        {$vo.getneedsdeal.getml.name} {$vo.getneedsdeal.getml.unit}
+                    </td>
+                    <td>
+                        <if condition="$vo['type'] eq 1">
+                            <span style="color: red">收<span id="tmsg{$vo.id}" style="color: red">
+                                 <empty name="$vo.dh">
+                                    请填入快递单号
+                                 <else />
+                                     请谨慎修改快递单号
+                                 </empty>
+                             </span>
+                            </span>
+                        <elseif condition="$vo['type'] eq 2"/>
+                            <span style="color: red">寄</span>
+                        </if>
+                        <br>
+                        <if condition="$vo['type'] eq 1">
+                            <input type="text" style="border: 1px solid #fff;" value="{$vo.dh}" onchange="tsendData(this,{$vo.id})">
+                            <elseif condition="$vo['type'] eq 2"/>
+                            {$vo.dh}"
+                        </if>
+
+                        <br>
+                        {$vo.getaddress.user}
+                        {$vo.getaddress.phone}
+                        <br>
+                        {$vo.getaddress.getprovince.name}
+                        {$vo.getaddress.getcity.name}
+                        {$vo.getaddress.getcounty.name}
+                        <br>
+                        {$vo.getaddress.address}
+                    </td>
+                    <td>{$vo.type_fix}</td>
+                    <td>{$vo.status_fix}</td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        {:date('Y-m-d H:i:s',$vo.update_time)}
+                    </td>
+                    <td>
+                        <if condition="$vo['type'] eq 1">
+                            <if condition="$vo['status'] eq 1">
+                                <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" data-msg="确定发货吗？"  style="margin-bottom: 10px;" href="{:url('Index/logistics_status',array('id'=>$vo['id'],'status'=>2))}"> 发 货 </a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;">物流信息</a>
+                                <elseif condition="$vo['status'] eq 2"/>
+                                <a class="layui-btn layui-btn-xs layui-btn-warm"  style="margin-bottom: 10px;" href="javascript:;">待买家收货</a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$vo['id']))}">物流信息</a>
+                                <elseif condition="$vo['status'] eq 3"/>
+                                <a class="layui-btn layui-btn-xs"  style="margin-bottom: 10px;" href="javascript:;">已完成</a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$vo['id']))}">物流信息</a>
+                            </if>
+                            <elseif condition="$vo['type'] eq 2"/>
+                            <if condition="$vo['status'] eq 1">
+                                <a class="layui-btn layui-btn-xs layui-btn-warm" style="margin-bottom: 10px;" href="javascript:;">待买家发货</a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;">物流信息</a>
+                                <elseif condition="$vo['status'] eq 2"/>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" style="margin-bottom: 10px;" data-msg="确定确认收货吗？" href="{:url('Index/logistics_status',array('id'=>$vo['id'],'status'=>3))}"> 确认收货 </a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$vo['id']))}">物流信息</a>
+                                <elseif condition="$vo['status'] eq 3"/>
+                                <a class="layui-btn layui-btn-xs" style="margin-bottom: 10px;" href="javascript:;">已完成</a>
+                                <br>
+                                <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$vo['id']))}">物流信息</a>
+                            </if>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+<script>
+    function tsendData(e,id){
+        var dh = e.value;
+        if (dh.length>8){
+            $.ajax({
+                url:"http://140.143.164.129:88/deal/Index/edit_dh",
+                data: {
+                    id:id,
+                    dh: dh,
+                },
+                type: 'POST',
+                async:false,
+                success:function (data) {
+                    if (data.code==1){
+                        $('#tmsg'+id).text('操作成功!');
+                        $('#tmsg'+id).css({color:"green"});
+                    }else{
+                        $('#tmsg'+id).text('操作失败!');
+                        $('#tmsg'+id).css({color:"yellow"});
+                    }
+                },
+                error:function () {
+                    alert('系统错误!');
+                }
+            });
+        }else{
+            alert('单号错误,请重新填写!');
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+</body>
+</html>

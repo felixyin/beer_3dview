@@ -1,0 +1,134 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+
+    /*table {*/
+    /*    width: 100%;*/
+    /*    float: left;*/
+    /*    table-layout:fixed;*/
+    /*    width:500px;*/
+    /*    border:1px solid #ccc;*/
+    /*}*/
+
+    /*table tr {*/
+    /*    line-height: 15px;*/
+    /*    border:1px solid #ccc;*/
+    /*}*/
+
+    /*table td {*/
+    /*    border:1px solid #ccc;*/
+    /*    text-align:center;*/
+
+    /*    white-space:nowrap;*/
+    /*    text-overflow:ellipsis;*/
+    /*    overflow:hidden;*/
+    /*}*/
+    /*.MHover{*/
+    /*    border:1px solid #ccc;*/
+    /*    white-space:nowrap;*/
+    /*    text-overflow:ellipsis;*/
+    /*    overflow:hidden;*/
+    /*}*/
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">订单管理</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('Index/index')}">
+        <div class="layui-inline">
+            状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="status" style="width: 140px;">
+                    <option <?php if($param['status']==0) echo 'selected'; ?> value='0'>全部</option>
+<!--                    <option <?php if($param['status']==1) echo 'selected'; ?> value='1'>待付款</option>-->
+                    <option <?php if($param['status']==2) echo 'selected'; ?> value='2'>未确认</option>
+                    <option <?php if($param['status']==3) echo 'selected'; ?> value='3'>未发货</option>
+                    <option <?php if($param['status']==4) echo 'selected'; ?> value='4'>待收货</option>
+                    <option <?php if($param['status']==5) echo 'selected'; ?> value='5'>已完成</option>
+                </select>
+            </div>&nbsp;
+            订单类型:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="order_type" style="width: 140px;">
+                    <option <?php if($param['order_type']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['order_type']==1) echo 'selected'; ?> value='1'>企业订单</option>
+                    <option <?php if($param['order_type']==2) echo 'selected'; ?> value='2'>个人订单</option>
+                </select>
+            </div>&nbsp;
+            关键字:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="search" style="width: 200px;"
+                       value="{$param['search']|default=''}" placeholder="请输入订单号或商品名称...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('Index/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="50">ID</th>
+                <th width="150">订单编号</th>
+                <th style="min-width: 100px;">商品名称</th>
+                <th width="60">订单数量</th>
+                <th width="70">单位</th>
+                <th width="60">容量</th>
+                <th width="60">当前状态</th>
+                <th width="130">下单时间</th>
+                <th width="60">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td><b>{$vo.id}</b></td>
+                    <td>{$vo.out_trade_no}</td>
+                    <td class="MHover" title="{$vo.title}" style="cursor: pointer;">{$vo.title}</td>
+                    <td>{$vo.num}</td>
+                    <td>{$vo.getneeds.getunit.name}</td>
+                    <td>
+                        <empty name="name">
+                            330 ml
+                            <else />
+                            {$vo.ml} ml
+                        </empty>
+                    </td>
+                    <td>{$vo.status_fix}</td>
+                    <td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs" href="{:url('Index/info',array('id'=>$vo['id']))}">详情信息</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+</body>
+</html>

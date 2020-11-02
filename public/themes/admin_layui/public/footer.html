@@ -1,0 +1,115 @@
+
+<script src="__TMPL__/public/lib/layui-v2.5.5/layui.js?v=1.0.4" charset="utf-8"></script>
+<script src="__TMPL__/public/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="__TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__TMPL__/public/assets/js/bootstrap.min.js"></script>
+{//__STATIC__/js/frontend.js}
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+
+<script>
+    layui.use(['form','element', 'layer', 'layuimini'], function () {
+        var $ = layui.jquery,
+            element = layui.element,
+            layer = layui.layer,
+            form =layui.form;
+    });
+</script>
+
+<script>
+    function myConfirm(url,msg) {
+        layer.confirm(msg,{
+                icon:3,title:'请确认',
+                btn:['确定','取消']},
+            function () {
+                self.location.href = url;
+                layer.closeAll('dialog');
+            },function () {
+                layer.closeAll('dialog');
+            }
+        );
+    }
+</script>
+
+
+<script>
+    function getpageinfo(obj,pageId) {
+        //计算分页信息
+        var listdata = $.parseJSON(obj);
+        _page_count = listdata['total'];
+        _page_limt  = listdata['per_page'];
+        _page_current = listdata['current_page'];
+
+        layui.use('laypage', function(){
+            var laypage = layui.laypage;
+            //执行一个laypage实例
+            //console.log(_page_count);
+            laypage.render({
+                elem: pageId //注意，这里的 test1 是 ID，不用加 # 号
+                ,count:_page_count //数据总数，从服务端得到
+                ,limit:_page_limt      //要通过计算获取
+                ,curr:_page_current
+                ,layout:['count', 'prev', 'page', 'next']
+                ,jump:function(obj,first){
+                    if(!first){
+                        $('#page').val(obj.curr);
+                        $('#_page_form').submit();
+                    }
+                }
+            });
+        });
+
+    }
+</script>
+
+
+<script type="text/javascript">
+    //生成分页样式
+    function mygetpage(ulid) {
+        var mypage = $("#mypagedata");
+        var uls = $(ulid);        //console.log(uls);
+        var a="";
+        uls.each(function (index,li) {
+            var title   = li.innerHTML;
+            var clslist = li.classList;
+            var disable = "";//是否禁用
+            title = title.replace('class="page-link"','');
+            title = title.replace('<span>','');
+            title = title.replace('<span >','');
+            title = title.replace('</span>','');
+            if($.inArray('disabled',clslist)>=0){
+                disable=" layui-btn-disabled";
+            }
+            //console.log('title:',title);
+            //上一页
+            if(index<=0){
+                if(title.indexOf('</a>')>=0){
+                    a = title;
+                }else{
+                    a = '<a href="javascript:;" class="layui-laypage-prev '+disable+'">'+title+'</a>';
+                }
+            }else if(index>=uls.length-1){
+                if(title.indexOf('</a>')>=0){
+                    a = title;
+                }else{
+                    a = '<a href="javascript:;" class="layui-laypage-next '+disable+'">'+title+'</a>';
+                }
+            }else{
+                //是否是当前页码
+                if($.inArray('active',clslist)>=0){
+                    a = '<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>'+title+'</em></span>';
+                }else if (title.indexOf('...')>=0){
+                    //是否为[...]
+                    a='<span>'+title+'</span>';
+                    //a='<span class="layui-btn-disabled">'+title+'</span>';
+                }else{
+                    a = title;
+                }
+            }
+
+            mypage.append(a);
+        });
+
+
+    }
+</script>

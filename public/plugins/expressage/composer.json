@@ -1,0 +1,14 @@
+{
+    "name": "thinkcmf/plugins-expressage",
+    "description": "ThinkCMF expressage plugin",
+    "type": "cmf-plugin",
+    "license": "apache2.0",
+    "authors": [
+      {
+        "name": "LSQ",
+        "email": "2545644408@qq.com"
+      }
+    ],
+    "require": {
+    }
+}

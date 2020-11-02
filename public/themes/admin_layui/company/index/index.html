@@ -1,0 +1,185 @@
+<include file="public@header2"/>
+
+<style>
+    .dowebok { width: 400px; margin: 100px auto;}
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('Index/index')}" style="color: #333">公司设置</a></li>
+    </ul>
+    <div class="row margin-top-20">
+<!--        <div class="col-md-1">-->
+<!--        </div>-->
+        <div class="col-md-9 col-md-offset-1" >
+            <!--            js-ajax-form-->
+
+            <form class="js-ajax-form" action="{:url('Index/addpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-name"><span class="form-required">*</span> 公司名称 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" name="name" value="{$data.name|default=''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-user"><span class="form-required">*</span> 联系人(收货人)/联系人电话 </label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="input-user" name="user" value="{$data.user|default=''}">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="input-phone" name="phone" value="{$data.phone|default=''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-address"><span class="form-required">*</span> 公司地址 </label>
+                            <div class="col-md-4">
+                                <select  class="form-control" id="province" name="province">
+                                    <foreach name="province" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['province']) echo 'selected'; ?> >{$vo.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select  class="form-control" id="city" name="city">
+                                    <foreach name="city" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['city']) echo 'selected'; ?> >{$vo.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select  class="form-control" id="county" name="county">
+                                    <foreach name="county" item="vo">
+                                        <option value="{$vo.id}" <?php if($vo['id']==$data['county']) echo 'selected'; ?> >{$vo.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 10px;">
+                                <input type="text" class="form-control" id="input-address" name="address" value="{$data.address|default=''}">
+                            </div>
+                        </div>
+
+                        <script type="text/javascript">
+                            $(document).ready(function (e) {
+                                province();
+                                city();
+                                county();
+                                $('#province').change(function () {
+                                    city();
+                                    county();
+                                })
+                                $('#city').change(function () {
+                                    county();
+                                })
+                            })
+                            function province(){
+                                var pcode = 1;
+                                var id = {$data['province']};
+                                $.ajax({
+                                    async:false,
+                                    url:"/company/index/city",
+                                    data:{pcode:pcode},
+                                    type:"POST",
+                                    dataType:"JSON",
+                                    success: function(data){
+                                        var str = "<option value='0' disabled>省名</option>";
+                                        for(var i=0;i<data.data.length;i++){
+                                            if (data.data[i].id==id){
+                                                str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].name+"</option>";
+                                            }else{
+                                                str += "<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>";
+                                            }
+                                        }
+                                        $("#province").html(str);
+                                    }
+                                })
+                            }
+                            function city(){
+                                var pcode = $("#province").val();
+                                var id = {$data['city']};
+                                $.ajax({
+                                    async:false,
+                                    url:"/company/index/city",
+                                    data:{pcode:pcode},
+                                    type:"POST",
+                                    dataType:"JSON",
+                                    success: function(data){
+                                        var str = "<option value='0' disabled>地市</option>";
+                                        for(var i=0;i<data.data.length;i++){
+                                            if (data.data[i].id==id){
+                                                str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].name+"</option>";
+                                            }else{
+                                                str += "<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>";
+                                            }
+                                        }
+                                        $("#city").html(str);
+                                    }
+                                })
+                            }
+                            function county(){
+                                var pcode = $("#city").val();
+                                var id = {$data['county']};
+                                $.ajax({
+                                    async:false,
+                                    url:"/company/index/city",
+                                    data:{pcode:pcode},
+                                    type:"POST",
+                                    dataType:"JSON",
+                                    success: function(data){
+                                        var str = "<option value='0' disabled>县市</option>";
+                                        for(var i=0;i<data.data.length;i++){
+                                            if (data.data[i].id==id){
+                                                str += "<option value='"+data.data[i].id+"' selected >"+data.data[i].name+"</option>";
+                                            }else{
+                                                str += "<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>";
+                                            }
+                                        }
+                                        $("#county").html(str);
+                                    }
+                                })
+                            }
+
+                        </script>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-server_tel"><span class="form-required">*</span> 客服电话 </label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-server_tel" name="server_tel" value="{$data['server_tel']|default=''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12" style="padding-top: 10px;" for="input-server_img1"><span class="form-required">*</span> 联系我们(客服微信图) </label>
+                            <div  class="col-md-12" >
+                                <div style="text-align: center;" id="input-server_img1">
+                                    <input type="hidden" name="server_img1" id="server_img1" value="{$data['server_img1']|default=''}">
+                                    <a href="javascript:uploadOneImage('图片上传','#server_img1');">
+                                        <empty name="$data['server_img1']">
+                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png" id="server_img1-preview" width="150" height="150" style="cursor: pointer"/>
+                                            <else />
+                                            <img src="{$data['server_img1']}" id="server_img1-preview" width="150" height="150" style="cursor: pointer"/>
+                                        </empty>
+                                    </a>
+                                    <input type="button" class="btn btn-sm btn-cancel-avatar" value="取消图片">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+                    </div>
+                </div>
+                <div class="form-group col-md-12" style="margin: 20px 20%;">
+                    <!--                    js-ajax-submit-->
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+
+                    <a class="btn btn-default" href="{:url('Index/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

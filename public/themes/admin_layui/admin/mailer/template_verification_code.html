@@ -1,0 +1,71 @@
+<include file="public@header"/>
+<style>
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+    }
+</style>
+</head>
+<body>
+<form class="layui-form js-ajax-form" action="{:url('admin/mailer/templatePost')}"
+      role="form" method="post">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li>
+                <a href="{:url('mailer/index')}">{:lang('ADMIN_MAILER_INDEX')}</a>
+            </li>
+            <li class="layui-this">数字验证码邮件模板</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="form-required">*</span>{:lang('EMAIL_SUBJECT')}
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" name="subject"
+                               id="input-title" value="{$subject|default=''}">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="form-required">*</span>{:lang('EMAIL_TEMPLATE')}
+                    </label>
+                    <div class="layui-input-block">
+                        <script type="text/plain" id="content"
+                                name="template">{$template|default=""|htmlspecialchars_decode}
+                        </script>
+                        <literal>
+                            <span style="color: #ffb752;">请用{$code}代替数字验证码</span>
+                        </literal>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <input type="hidden" name="template_key" value="verification_code">
+                        <button type="submit" class="layui-btn js-ajax-submit">
+                            {:lang('SAVE')}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<include file="public@footer"/>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    var editorcontent = new baidu.editor.ui.Editor();
+    editorcontent.render('content');
+</script>
+</body>
+</html>

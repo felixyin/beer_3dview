@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh_CN" style="overflow: hidden;">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <title>{:lang('ADMIN_CENTER')}</title>
+    <meta name="description" content="This is page-header (.page-header &gt; h1)">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <link rel="icon" href="__TMPL__/public/images/favicon.ico">
+    <link rel="stylesheet" href="__TMPL__/public/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="__TMPL__/public/css/layuimini.css" media="all">
+    <link rel="stylesheet" href="__TMPL__/public/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style id="layuimini-bg-color">
+    </style>
+    <script>
+        //全局变量
+        var GV = {
+            HOST: "{$_SERVER['HTTP_HOST']|default=''}",
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "static/js/"
+        };
+    </script>
+    <php>
+        if (!function_exists('getMenuJson')){
+            function getMenuJson($menus){
+                //生成json菜单
+                $sysmenu = [];//menuInfo
+                foreach($menus as $k=>$item){
+                    $menuitem =[
+                        'id'        =>  $item['id'],
+                        'title'     =>  $item['name'],
+                        'icon'      =>  strlen($item['icon'])>0? "fa fa-".$item['icon'] : 'fa fa-caret-right',
+                        'href'      =>  $item['url'],
+                        'lang'      =>  $item['lang'],
+                        'parent'    =>  $item['parent'],
+                        'target'    =>  '_self',
+                    ];
+                    //child
+                    if(isset($item['items']) && count($item['items'])>0){
+                        $menuitem['child'] = getSubMenuJson($item['items']);
+                    }
+                    array_push($sysmenu,$menuitem);
+                }
+
+                $result = json_encode(['menuInfo'=>['adminMenus'=>[
+                        'title'     =>'系统菜单',
+                        'icon'      =>'fa fa-address-book',
+                        'child'     =>$sysmenu
+                        ]],
+                        'clearInfo' =>['clearUrl'=>url('admin/Setting/clearcache')],
+                        'homeInfo'  =>['title'=>lang('HOME'),'icon'=>'fa fa-home',"href"=>url('main/index')]
+                    ],JSON_UNESCAPED_UNICODE);
+                return $result;
+            }
+        }
+
+        //$submenus=$menus;
+        if (!function_exists('getSubMenuJson')){
+            function getSubMenuJson($items){
+                $child=[];
+                foreach($items as $k=>$sub){
+                    $item = [
+                        'id'        => $sub['id'],
+                        'parent'    => $sub['parent'],
+                        "title"     => $sub['name'],
+                        "href"      => $sub['url'],
+                        "lang"      => $sub['lang'],
+                        "icon"      => strlen($sub['icon'])>0? "fa fa-".$sub['icon'] : 'fa fa-caret-right',
+                        "target"    => "_self"
+                    ];
+                    if(isset($sub['items']) && count($sub['items'])>0){
+                        $item['child'] = getSubMenuJson($sub['items']);
+                    }
+                    array_push($child,$item);
+                }
+                return $child;
+            }
+        }
+    </php>
+
+    <script>
+        //json菜单数据
+        var sysmenu = {:getMenuJson($menus)};
+    </script>
+</head>
+
+<body class="layui-layout-body layuimini-all">
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header header">
+        <div class="layui-logo">
+            <a href="javascript:">
+                <img src="__TMPL__/public/images/logo.png" alt="logo">
+                <h1>{:lang('ADMIN_CENTER')}</h1>
+            </a>
+        </div>
+        <a>
+            <div class="layuimini-tool"><i title="展开" class="fa fa-outdent" data-side-fold="1"></i></div>
+        </a>
+        <ul class="layui-nav layui-layout-left layui-header-menu layui-header-pc-menu mobile layui-hide-xs">
+        </ul>
+
+        <ul class="layui-nav layui-layout-left layui-header-menu mobile layui-hide-sm">
+            <li class="layui-nav-item">
+                <a href="javascript:"><i class="fa fa-list-ul"></i> 选择模块</a>
+                <dl class="layui-nav-child layui-header-mini-menu">
+                </dl>
+            </li>
+        </ul>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item" lay-unselect title="{:lang('WEBSITE_HOME_PAGE')}">
+                <a href="__ROOT__/" target="_blank" style="padding-right: 10px;padding-left: 10px"
+                   data-refresh="主页"><i class="fa fa-home"></i></a>
+            </li>
+
+            <li class="layui-nav-item" lay-unselect title="刷新页面">
+                <a href="javascript:" style="padding-right: 10px;padding-left: 10px"
+                   data-refresh="刷新"><i class="fa fa-refresh"></i></a>
+            </li>
+
+            <li class="layui-nav-item mobile layui-hide-xs" lay-unselect title="页面全屏">
+                <a href="javascript:" style="padding-right: 10px;padding-left: 10px"
+                   data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
+            </li>
+            <li class="layui-nav-item layuimini-setting">
+                <a href="javascript:">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </a>
+                <dl class="layui-nav-child">
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'user/AdminAsset/index')">
+                        <dd title="资源管理">
+                            <a href="javascript:" data-iframe-tab="{:url('user/AdminAsset/index')}"
+                               data-title="资源管理" data-icon="fa fa-tree">
+                                <i class="fa fa-tree" aria-hidden="true"></i>
+                                资源管理</a>
+                        </dd>
+                    </if>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/Setting/clearcache')">
+                        <dd title="清理缓存">
+                            <a href="javascript:" data-iframe-tab="{:url('admin/Setting/clearcache')}"
+                               data-title="清理缓存" data-icon="fa fa-trash-o">
+                                <i class="fa fa-trash-o"></i>
+                                清理缓存</a>
+                        </dd>
+                    </if>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/RecycleBin/index')">
+                        <dd title="回收站">
+                            <a href="javascript:" data-iframe-tab="{:url('admin/RecycleBin/index')}"
+                               data-title="回收站" data-icon="fa fa-recycle">
+                                <i class="fa fa-recycle"></i>
+                                回收站</a>
+                        </dd>
+                    </if>
+                    <if condition="APP_DEBUG">
+                        <dd title="{:lang('ADMIN_MENU_INDEX')}">
+                            <a href="javascript:" data-iframe-tab="{:url('admin/Menu/index')}"
+                               data-title="{:lang('ADMIN_MENU_INDEX')}" data-icon="fa fa-list">
+                                <i class="fa fa-list"></i>
+                                {:lang('ADMIN_MENU_INDEX')}</a>
+                        </dd>
+                    </if>
+                </dl>
+            </li>
+
+
+
+            <li class="layui-nav-item layuimini-setting">
+                <a href="javascript:">
+                    <if condition="isset($admin['avatar']) && $admin['avatar']">
+                        <img  width="30" height="30"
+                              src="{:cmf_get_user_avatar_url($admin['avatar'])}"
+                              alt="{$admin.user_login}">
+                        <else/>
+                        <img  width="20px" height="20px"
+                              src="__TMPL__/public/images/user.png"
+                              alt="{$admin.user_login|default=''}">
+                    </if>
+                    {:lang('WELCOME_USER',array('user_nickname' => empty($admin['user_nickname'] )? $admin['user_login'] : $admin['user_nickname']))}
+                </a>
+                <dl class="layui-nav-child">
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/Setting/site')">
+                        <dd>
+                            <a href="javascript:" data-iframe-tab="{:url('setting/site')}"
+                               data-title="{:lang('ADMIN_SETTING_SITE')}"
+                               data-icon="fa fa-star-o"><i class="fa fa-star-o" aria-hidden="true"></i>
+                                {:lang('ADMIN_SETTING_SITE')}</a>
+                        </dd>
+                    </if>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/user/userinfo')">
+                        <dd>
+                            <a href="javascript:" data-iframe-tab="{:url('user/userinfo')}"
+                               data-title="{:lang('ADMIN_USER_USERINFO')}"
+                               data-icon="fa fa-user-o"><i class="fa fa-user-o" aria-hidden="true"></i>
+                                {:lang('ADMIN_USER_USERINFO')}</a>
+                        </dd>
+                    </if>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/Setting/password')">
+                        <dd>
+                            <a href="javascript:;" data-iframe-tab="{:url('setting/password')}"
+                               data-title="{:lang('ADMIN_SETTING_PASSWORD')}"
+                               data-icon="fa fa-lock"><i class="fa fa-lock" aria-hidden="true"></i>
+                                {:lang('ADMIN_SETTING_PASSWORD')}</a>
+                        </dd>
+                    </if>
+                    <li>
+                        <a href="{:url('Public/logout')}"><i class="fa fa-sign-out"></i>
+                            {:lang('LOGOUT')}</a>
+                    </li>
+                </dl>
+            </li>
+            <li class="layui-nav-item layuimini-select-bgcolor mobile layui-hide-xs" lay-unselect>
+                <a href="javascript:;" data-bgcolor="配色方案"><i class="fa fa-ellipsis-v"></i></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll layui-left-menu">
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <div class="layui-tab" lay-filter="layuiminiTab" id="top_tabs_box">
+            <ul class="layui-tab-title" id="top_tabs">
+                <li class="layui-this" id="layuiminiHomeTabId" lay-id=""></li>
+            </ul>
+            <ul class="layui-nav closeBox">
+                <li class="layui-nav-item">
+                    <a href="javascript:;"> <i class="fa fa-dot-circle-o"></i> 页面操作</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-page-close="other"><i class="fa fa-window-close"></i> 关闭其他</a>
+                        </dd>
+                        <dd><a href="javascript:;" data-page-close="all"><i class="fa fa-window-close-o"></i> 关闭全部</a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+            <div class="layui-tab-content clildFrame">
+                <div id="layuiminiHomeTabIframe" class="layui-tab-item layui-show">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="__TMPL__/public/lib/layui-v2.5.5/layui.js?v=1.0.4" charset="utf-8"></script>
+<script src="__TMPL__/public/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['element', 'layer', 'layuimini'], function () {
+        var $ = layui.jquery,
+            element = layui.element,
+            layer = layui.layer;
+
+        layuimini.myinit(sysmenu);//调用上面的变量
+
+        // $('.login-out').on("click", function () {
+        //     layer.msg('退出成功', function () {
+        //         window.location = '{:url("admin/public/login")}';
+        //     });
+        // });
+    });
+</script>
+
+</body>
+</html>

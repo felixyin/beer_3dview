@@ -1,0 +1,69 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">快递信息</a></li>
+        </ul>
+    </div>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <if condition="$data['expName'] eq 0">
+                <tr>
+                    <th width="120" style="text-align: center">快递公司</th>
+                    <td>{$data['expName']}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: center">快递单号</th>
+                    <td>{$data['result']['number']}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        货 <br>
+                        物 <br>
+                        信 <br>
+                        息
+                    </td>
+                    <td>
+                        <foreach name="data['result']['list']" item="vo">
+                            {$vo.time} - {$vo.status} <br>
+                        </foreach>
+                    </td>
+                </tr>
+                <else />
+                <tr>
+                    <th style="text-align: center">快递信息</th>
+                    <td>暂未查询到该快递信息</td>
+                </tr>
+            </if>
+            <tr>
+                <th style="text-align: center">操作</th>
+                <td>
+                    <empty name="status">
+                        <a class="layui-btn layui-btn-xs" href="{:url('Index/logistics',array('id'=>$info))}">返回</a>
+                        <else />
+                        <a class="layui-btn layui-btn-xs" href="{:url('Index/info',array('id'=>$info))}">返回</a>
+                    </empty>
+                </td>
+            </tr>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+</body>
+</html>

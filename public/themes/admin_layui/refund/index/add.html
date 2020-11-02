@@ -1,0 +1,149 @@
+<include file="public@header2"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('Index/index')}" style="color: #333">账单管理</a></li>
+        <li class="active"><a href="javascript:;">退款操作</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-1">
+<!--            <div class="list-group">-->
+<!--                <a class="list-group-item" href="#A" data-toggle="tab">基本属性</a>-->
+<!--                <a class="list-group-item" href="#B" data-toggle="tab">SEO设置</a>-->
+<!--                <a class="list-group-item" href="#C" data-toggle="tab">模板设置</a>-->
+<!--            </div>-->
+        </div>
+        <div class="col-md-8">
+<!--            js-ajax-form-->
+            <form class="js-ajax-form" action="{:url('Index/check_create_refund')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">标题</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" disabled name="" value="{$data['name']}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">订单号</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" disabled name="" value="{$data['order_number']}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">退款人</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" disabled name="" value="{$data.user.user_name}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">支付方式</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="input-name" disabled name="" value="{$data.type_payment}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">付款金额</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control"  id="input-name"  disabled name="" value="{$data['total_fee']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">退款金额</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" name="refund_fee" id="refund_fee" value="{$data['total_fee']|default=''}">
+                            </div>
+                        </div>
+
+                        <script type="text/javascript">
+                            $(document).ready(function (e) {
+                                // $('#refund_fee').change(function () {
+                                //     var totalfee = {$data['total_fee']};
+                                //     var refund_fee = $('#refund_fee').val();
+                                //     if (refund_fee>totalfee){
+                                //         alert('退款填写错误,应小于等于付款额!');
+                                //     }
+                                //     console.log(totalfee);
+                                // })
+                                $('#refund_fee').blur(function () {
+                                    var totalfee = {$data['total_fee']};
+                                    var refund_fee = $('#refund_fee').val();
+                                    if (refund_fee > totalfee){
+                                        alert('退款填写错误,应小于等于付款额!');
+                                    }
+                                })
+                            })
+
+                        </script>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12" for="input-name">退款描述</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" name="refund_description" value="{$data['refund_description']|default=''}">
+                            </div>
+                        </div>
+
+                        <notempty name="$data['appeal_time']">
+                            <div class="form-group">
+                                <label class="col-md-12" for="input-description">申请退款原因</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" disabled id="input-description">{$data['appeal_content']|default=''}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12" for="input-description">申请退款截图说明</label>
+                                <div class="col-md-12">
+                                    <empty name="$data['appeal_img']">
+                                        <input type="text" class="form-control" disabled name="" value="未上传说明截图">
+                                        <else />
+                                        <foreach name="$data['appeal_img']" item="vo">
+                                            <img width="250" src="{$vo}"/>
+                                        </foreach>
+                                    </empty>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12" for="input-description">申请退款音频说明</label>
+                                <div class="col-md-12">
+                                    <empty name="$data['appeal_audio']">
+                                        <input type="text" class="form-control" disabled name="" value="未上传说明音频">
+                                        <else />
+                                        <foreach name="$data['appeal_audio']" item="vo">
+                                            <audio controls src="{$vo}">您的浏览器不支持 audio 标签。</audio>
+                                        </foreach>
+                                    </empty>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12" for="input-description">申请退款时间</label>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" disabled name="" value="{:date('Y-m-d H:i:s',$data['appeal_time'])}">
+                                </div>
+                            </div>
+                        </notempty>
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+
+                    </div>
+                </div>
+                <div class="form-group col-md-12" style="margin: 20px 20%;">
+<!--                    js-ajax-submit-->
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+                    <a class="btn btn-default" href="{:url('Index/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

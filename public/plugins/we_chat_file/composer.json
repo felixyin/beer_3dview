@@ -1,0 +1,14 @@
+{
+    "name": "thinkcmf/plugins-we_chat_file",
+    "description": "ThinkCMF we_chat_file plugin",
+    "type": "cmf-plugin",
+    "license": "apache2.0",
+    "authors": [
+      {
+        "name": "LSQ",
+        "email": "2545644408@qq.com"
+      }
+    ],
+    "require": {
+    }
+}

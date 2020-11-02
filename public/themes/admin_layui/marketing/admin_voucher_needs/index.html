@@ -1,0 +1,115 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">优惠券应用</a></li>
+            <li><a href="{:url('AdminVoucherNeeds/add')}">添加应用优惠券</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('AdminVoucherNeeds/index')}">
+        <div class="layui-inline">
+            状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="status" style="width: 140px;">
+                    <option <?php if($param['status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['status']==1) echo 'selected'; ?> value='1'>开启</option>
+                    <option <?php if($param['status']==2) echo 'selected'; ?> value='2'>禁用</option>
+                </select>
+            </div>&nbsp;
+            类型:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="type" style="width: 140px;">
+                    <option <?php if($param['type']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['type']==1) echo 'selected'; ?> value='1'>专券</option>
+                    <option <?php if($param['type']==2) echo 'selected'; ?> value='2'>通券</option>
+                </select>
+            </div>&nbsp;
+            商品名称:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="name" style="width: 200px;"
+                       value="{$param['name']|default=''}" placeholder="请输入商品名称...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('AdminVoucherNeeds/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="50">序号</th>
+                <th width="80">优惠名称</th>
+                <th width="80">商品名称</th>
+                <th width="120">优惠规则</th>
+                <th width="60">兑换码</th>
+                <th width="100">开始/结束时间</th>
+                <th width="60">使用状态</th>
+                <th width="50">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td><b>{$key+1}</b></td>
+                    <td>{$vo.getdiscounts.name}</td>
+                    <td>
+                        <empty name="$vo.needs_id">
+                            通券
+                            <else />
+                            {$vo.getneeds.title}
+                        </empty>
+                    </td>
+                    <td>
+                        满 {$vo.getdiscounts.money} 元,优惠 {$vo.getdiscounts.num} 元
+                        <br>
+                        <if condition="$vo['getdiscounts']['get_mode'] eq 1">
+                            自动领取
+                            <elseif condition="$vo['getdiscounts']['get_mode'] eq 2" />
+                            手动领取
+                            <elseif condition="$vo['getdiscounts']['get_mode'] eq 3" />
+                            兑换码领取
+                        </if>
+                    </td>
+                    <td>{$vo.conversion_code}</td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.start_time)}
+                        <br>
+                        {:date('Y-m-d H:i:s',$vo.end_time)}
+                    </td>
+                    <td>{$vo.status_fix}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs layui-btn-normal" href="{:url('AdminVoucherNeeds/add',array('id'=>$vo['id']))}">编 辑</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+</body>
+</html>

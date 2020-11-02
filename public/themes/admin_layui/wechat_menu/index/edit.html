@@ -1,0 +1,74 @@
+<include file="public@header2"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('Index/index')}" style="color: #333">公众号菜单管理</a></li>
+        <li class="active"><a href="javascript:;">添加菜单</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-2">
+<!--            <div class="list-group">-->
+<!--                <a class="list-group-item" href="#A" data-toggle="tab">基本属性</a>-->
+<!--                <a class="list-group-item" href="#B" data-toggle="tab">SEO设置</a>-->
+<!--                <a class="list-group-item" href="#C" data-toggle="tab">模板设置</a>-->
+<!--            </div>-->
+        </div>
+        <div class="col-md-6">
+            <form class="js-ajax-form" action="{:url('Index/editpost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label for="input-parent">父菜单名称</label>
+                            <div>
+                                <h5>编辑 &nbsp;<span style="color: blue;">{$data.name}</span>  &nbsp;菜 单</h5>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name"><span class="form-required">*</span>菜单名称</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-name" name="name" value="{$data['name']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-parent">按钮类型</label>
+                            <div>
+                                <select class="form-control" name="type" id="input-parent">
+                                    <option <?php if($data['type']=='view') echo 'selected'; ?> value="view" >网页跳转</option>
+                                    <option <?php if($data['type']=='miniprogram') echo 'selected'; ?> value="miniprogram" >小程序跳转 </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name"><span class="form-required">*</span>网页跳转地址</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-alias" name="url" placeholder="例如: https://www.lsqspace.com " value="{$data['url']|default=''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-name">小程序跳转页码</label>
+                            <div>
+                                <input type="text" class="form-control" id="input-alias" name="pagepath" placeholder="例如: /h5/page/index" value="{$data['pagepath']|default=''}">
+                            </div>
+                        </div>
+
+                        <input type="hidden"  name="parent_id" value="{$param['parent_id']|default=''}">
+                        <input type="hidden"  name="id" value="{$data['id']|default=''}">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary js-ajax-submit">提 交</button>
+                    <a class="btn btn-default" href="{:url('Index/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

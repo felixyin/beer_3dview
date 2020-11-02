@@ -1,0 +1,85 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">分类管理</a></li>
+            <li><a href="{:url('Cat/add')}">添加分类</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('Cat/index')}">
+        <div class="layui-inline">
+            状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="status" style="width: 140px;">
+                    <option <?php if($param['status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['status']==1) echo 'selected'; ?> value='1'>发布</option>
+                    <option <?php if($param['status']==2) echo 'selected'; ?> value='2'>下架</option>
+                </select>
+            </div>&nbsp;
+            分类:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="name" style="width: 200px;"
+                       value="{$param['name']|default=''}" placeholder="请输入关键字...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('Cat/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="50">序号</th>
+                <th width="80">缩略图</th>
+                <th width="100">分类名称</th>
+                <th width="100">创建/修改时间</th>
+                <th width="50">当前状态</th>
+                <th width="60">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td><b>{$key+1}</b></td>
+                    <td><img src="{:cmf_get_image_url($vo['thumbnail'])}" style="height: 50px"></td>
+                    <td style="text-align: left">{$vo.name}</td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        {:date('Y-m-d H:i:s',$vo.update_time)}
+                    </td>
+                    <td>{$vo.status_fix}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs" href="{:url('Cat/add',array('id'=>$vo['id']))}">编 辑</a>
+                        <if condition="($vo.status eq 1) ">
+                            <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" data-msg="确定下架吗？" href="{:url('Cat/status',array('id'=>$vo['id'],'status'=>2))}">下 架</a>
+                            <else />
+                            <a class="layui-btn layui-btn-xs js-ajax-dialog-btn" data-msg="确定上架吗？" href="{:url('Cat/status',array('id'=>$vo['id'],'status'=>1))}">上 架</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+
+</body>
+</html>

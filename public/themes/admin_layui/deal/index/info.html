@@ -1,0 +1,195 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table th {
+        line-height: 15px;
+        border:1px solid #ccc;
+        width: 100px;
+    }
+    table td {
+        line-height: 15px;
+        border:1px solid #ccc;
+        width: 300px;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class=""><a href="{:url('Index/index')}">订单管理</a></li>
+            <li class="layui-this"><a href="javascript:;">订单详情</a></li>
+        </ul>
+    </div>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <tr>
+                <th>订单编号</th>
+                <td colspan="3">{$data.out_trade_no}</td>
+            </tr>
+            <tr>
+                <th>商品名称</th>
+                <td>{$data.getneeds.title}</td>
+                <th rowspan="3">商品图片</th>
+                <td rowspan="3">
+                    <img src="{$data['compound_imamge']}" id="thumbnail-preview" width="170" height="150" style="cursor: pointer"/>
+                </td>
+
+            </tr>
+
+            <tr>
+                <th>商品单价</th>
+                <td>{$data.getneeds.price/100} <span style="margin-left: 5px;">元</span></td>
+            </tr>
+            <tr>
+                <th>数量</th>
+                <td><b>{$data.num}</b><span style="margin-left: 10px;">({$data.getneeds.getunit.name})</span></td>
+            </tr>
+            <tr>
+                <th>优惠券</th>
+                <td>
+                    优惠券名称:
+                    <empty name="$data.getdiscountsuser.getdiscountsneeds.getdiscounts.num">
+                        -
+                        <else />
+                        {$data.getdiscountsuser.getdiscountsneeds.getdiscounts.name}
+                    </empty>
+                    <br>
+                    优惠金额:
+                    <empty name="$data.getdiscountsuser.getdiscountsneeds.getdiscounts.num">
+                        -
+                        <else />
+                        {$data.getdiscountsuser.getdiscountsneeds.getdiscounts.num} 元
+                    </empty>
+                </td>
+                <th>下单时间</th>
+                <td>{:date('Y-m-d H:i:s',$data.create_time)}</td>
+            </tr>
+            <tr>
+                <th>成交额111</th>
+                <td>{$data.total_fee} <span style="margin-left: 5px;">元</span></td>
+                <th>发货时间</th>
+                <td>
+                    <empty name="$data.consignment_time">
+                        还未发货
+                        <else />
+                        {:date('Y-m-d H:i:s',$data.consignment_time)}
+                    </empty>
+
+                </td>
+            </tr>
+            <foreach name="$data.getconsignment" item="vo">
+                <tr>
+                    <th>发货地址 - {$key+1}</th>
+                    <td colspan="2">
+                        数量: {$vo.num} ({$data.getneeds.getunit.name})
+                        <br>
+                        快递单号: <input type="text" style="border: 1px solid #fff;width: 200px;" value="{$vo.dh}" onchange="tsendData(this,{$vo.id})">
+                             <span id="tmsg{$vo.id}" style="color: red">
+                                 <empty name="$vo.dh">
+                                    请填入快递单号
+                                 <else />
+                                     请谨慎修改
+                                 </empty>
+                             </span>
+                        <br>
+                        收货人: {$vo.getaddress.user}  电话: {$vo.getaddress.phone}
+                        <br>
+                        {$vo.getaddress.getprovince.name} / {$vo.getaddress.getcity.name} / {$vo.getaddress.getcounty.name} / {$vo.getaddress.address}
+                    </td>
+                    <td>
+                        <if condition="($vo.status eq 1)">
+                            <span id="fh{$vo.id}">
+                                <empty name="$vo.dh">
+                                    <a class="layui-btn layui-btn-xs layui-btn-disabled" style="width: 105px;margin-bottom: 10px;" href="javascript:;"> 发 货 (确认发货) </a>
+                                <else />
+                                    <a class="layui-btn layui-btn-xs layui-btn-warm js-ajax-dialog-btn" data-msg="确定已经发货了吗?" style="width: 105px;margin-bottom: 10px;" href="{:url('Index/consignment',array('id'=>$vo['id'],'order_id'=>$data.out_trade_no))}"> 发 货 (确认发货) </a>
+                                </empty>
+                            </span>
+                            <br>
+                            <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;">查看物流信息</a>
+                        <elseif condition="($vo.status eq 2)"/>
+                            <a class="layui-btn layui-btn-xs layui-btn-normal"  style="width: 105px;margin-bottom: 10px;" href="javascript:;">等待买家确认收货</a>
+                            <br>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$data['id'],'status'=>1))}">查看物流信息</a>
+                        <elseif condition="($vo.status eq 3)"/>
+                            <a class="layui-btn layui-btn-xs"  style="width: 105px;margin-bottom: 10px;"  href="javascript:;">买家已收货已完成</a>
+                            <br>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/kuai_di',array('no'=>$vo['dh'],'id'=>$data['id'],'status'=>1))}">查看物流信息</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+
+        </table>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+<script>
+
+    function tsendData(e,id){
+        var dh = e.value;
+        if (dh.length>8){
+            $.ajax({
+                url:"http://140.143.164.129:88/deal/Index/edit_dh",
+                data: {
+                    id:id,
+                    dh: dh,
+                },
+                type: 'POST',
+                async:false,
+                success:function (data) {
+                    if (data.code==1){
+                        $('#tmsg'+id).text('操作成功!');
+                        $('#tmsg'+id).css({color:"green"});
+                    }else{
+                        $('#tmsg'+id).text('操作失败!');
+                        $('#tmsg'+id).css({color:"yellow"});
+                    }
+                },
+                error:function () {
+                    alert('系统错误!');
+                }
+            });
+        }else{
+            alert('单号错误,请重新填写!');
+        }
+    }
+    function sendData(e,id){
+        var dh = e.value;
+        if (dh.length>8){
+            $.ajax({
+                url:"http://140.143.164.129:88/deal/Index/edit_dh",
+                data: {
+                    id:id,
+                    dh: dh,
+                },
+                type: 'POST',
+                async:false,
+                success:function (data) {
+                    if (data.code==1){
+                        $('#msg'+id).text('操作成功!');
+                        $('#msg'+id).css({color:"green"});
+                        $('#fh'+id).html("<a class='layui-btn layui-btn-xs layui-btn-warm js-ajax-dialog-btn' data-msg='确定已经发货了吗？' style='width: 105px;margin-bottom: 10px;' href=\"{:url('Index/consignment',array('id'=>"+id+",'order_id'=>$data.out_trade_no))}\"> 发 货 (确认发货) </a>");
+                    }else{
+                        $('#msg'+id).text('操作失败!');
+                        $('#msg'+id).css({color:"yellow"});
+                    }
+                },
+                error:function () {
+                    alert('系统错误!');
+                }
+            });
+        }else{
+            alert('单号错误,请重新填写!');
+        }
+    }
+</script>
+
+
+</body>
+</html>

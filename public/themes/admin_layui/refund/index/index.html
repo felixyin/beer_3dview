@@ -1,0 +1,293 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+    .layui-form-label{
+        width: 150px;
+    }
+    .layui-input-block{
+        margin-left: 180px;
+        width: 50%;
+    }
+
+    /*table {*/
+    /*    width: 100%;*/
+    /*    float: left;*/
+    /*    table-layout:fixed;*/
+    /*    width:500px;*/
+    /*    border:1px solid #ccc;*/
+    /*}*/
+
+    /*table tr {*/
+    /*    line-height: 15px;*/
+    /*    border:1px solid #ccc;*/
+    /*}*/
+
+    /*table td {*/
+    /*    border:1px solid #ccc;*/
+    /*    text-align:center;*/
+
+    /*    white-space:nowrap;*/
+    /*    text-overflow:ellipsis;*/
+    /*    overflow:hidden;*/
+    /*}*/
+    /*.MHover{*/
+    /*    border:1px solid #ccc;*/
+    /*    white-space:nowrap;*/
+    /*    text-overflow:ellipsis;*/
+    /*    overflow:hidden;*/
+    /*}*/
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">账单管理</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('Index/index')}">
+        <div class="layui-inline">
+            状态:
+            <div class="layui-input-inline" style="width: 150px">
+                <select  class="" name="refund_status" style="width: 140px;">
+                    <option <?php if($param['refund_status']==0) echo 'selected'; ?> value='0'>全部</option>
+                    <option <?php if($param['refund_status']==4) echo 'selected'; ?> value='4'>正常订单</option>
+                    <option <?php if($param['refund_status']==1) echo 'selected'; ?> value='1'>申请退款</option>
+                    <option <?php if($param['refund_status']==2) echo 'selected'; ?> value='2'>已 退 款</option>
+                    <option <?php if($param['refund_status']==3) echo 'selected'; ?> value='3'>取消退款</option>
+                </select>
+            </div>&nbsp;
+            订单号:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="search" style="width: 200px;"
+                       value="{$param['search']|default=''}" placeholder="请输入订单号...">
+            </div>
+            用户名:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="user_name" style="width: 200px;"
+                       value="{$param['user_name']|default=''}" placeholder="请输入用户名...">
+            </div>
+
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('Index/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th style="text-align: center;width: 140px;">订 单 号</th>
+                <th style="text-align: center;width: 90px;"> 用 户 名 称</th>
+                <th style="text-align: center;width: 160px;">支 付 </th>
+                <th style="text-align: center;width: 120px;"> 金 额 (元)</th>
+                <th style="text-align: center;width: 240px"> 操 作 时 间</th>
+                <th style="text-align: center;width: 110px;"> 操作描述 </th>
+                <th style="text-align: center;width: 80px;"> 当前状态 </th>
+                <th style="text-align: center;width: 60px;"> 操 作 </th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+
+            <foreach name="data" item="vo">
+                <tr>
+                    <td>
+                        {$vo.order_number}
+                    </td>
+                    <td>{$vo.user.user_name}</td>
+                    <td style="text-align: left;">
+                        方式:<br>
+                        <switch name="$vo['type_payment']">
+                            <case value="1">微信公众号</case>
+                            <case value="2">微信小程序</case>
+                            <case value="3">账户余额</case>
+                        </switch>
+                        <br>
+                        用途:<br>
+                        <switch name="$vo['type']">
+                            <case value="1"> 充 值 </case>
+                            <case value="2">购买需求</case>
+                            <case value="3">购买会员</case>
+                            <case value="4">购买广告</case>
+                        </switch>
+                    </td>
+                    <td style="text-align: left;">
+                        支付:
+                        {$vo.total_fee/100}
+                        <br>
+                        退款:
+                        <notempty name="$vo['refund_fee']">
+                            {$vo.refund_fee/100}
+                        </notempty>
+                    </td>
+                    <td style="text-align: left;">
+                        支付: <br>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        退款:<br>
+                        <notempty name="$vo['update_time']">
+                            {:date('Y-m-d H:i:s',$vo.update_time)}
+                        </notempty>
+                    </td>
+                    <?php
+                        $description = empty($vo['refund_description'])?$vo['remake']:'退款:'.$vo['refund_description'].'/'.$vo['remake'];
+                    ?>
+                    <td title="{$description}">
+                        {$description}
+                    </td>
+                    <td>
+                        <switch name="$vo['refund_status']">
+                            <case value="1"><a class="layui-btn layui-btn-xs layui-btn-warm" href="javascript:;"> 申 请 退 款 </a></case>
+                            <case value="2"><a class="layui-btn layui-btn-xs layui-btn-normal" href="javascript:;"> 已退款完成 </a></case>
+                            <case value="3"><a class="layui-btn layui-btn-xs layui-btn-warm" href="javascript:;"> 已取消退款</a></case>
+                            <case value="4"><a class="layui-btn layui-btn-xs" href="javascript:;"> 正 常 订 单 </a></case>
+                        </switch>
+                    </td>
+                    <td>
+                        <if condition="$vo.refund_status eq 1">
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/add',array('id'=>$vo['id']))}">&nbsp;&nbsp;退&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;款&nbsp;&nbsp;</a>
+                            <br><br>
+                            <a class="layui-btn layui-btn-xs layui-btn-warm js-ajax-dialog-btn" data-msg="确定取消退款吗？" href="{:url('Index/status',array('id'=>$vo['id']))}">&nbsp;取消退款&nbsp;</a>
+                        <elseif condition="$vo.refund_status eq 4"/>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" href="{:url('Index/add',array('id'=>$vo['id']))}">&nbsp;&nbsp;退&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;款&nbsp;&nbsp;</a>
+                            <br><br>
+                            <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;" style="color: #666;">&nbsp;取消退款&nbsp;</a>
+                        <else />
+                            <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;" style="color: #666;">&nbsp;&nbsp;退&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;款&nbsp;&nbsp;</a>
+                            <br><br>
+                            <a class="layui-btn layui-btn-xs layui-btn-disabled" href="javascript:;" style="color: #666;">&nbsp;取消退款&nbsp;</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+<script>
+    var selectedcount = 0;//用户选中项数量
+    layui.use(['form','jquery','laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start_time' //指定元素
+            ,type:'datetime'
+        });
+        laydate.render({
+            elem: '#end_time' //指定元素
+            ,type:'datetime'
+        });
+        //全选或反选
+        form.on('checkbox(allChoose)',function (data) {
+            $("input[name='ids[]']").each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+        //有一个未选中则为未选状态;全部选中后,则为选中状态return false;//跳出循环
+        form.on('checkbox(myids)',function (data) {
+            var items = $("input[name='ids[]']");//获取所有行的checkbox
+            var all = items.length;//总行数
+            var sum   = 0;//用户选中项数量
+            items.each(function (index, item) {
+                if(item.checked){
+                    sum += 1;
+                }
+            });
+
+            selectedcount = sum;
+            $('#checkall').prop('checked',sum >= all ? true : false);
+            form.render('checkbox');
+        });
+        //
+
+
+    });
+
+
+
+
+
+
+</script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

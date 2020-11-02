@@ -1,0 +1,87 @@
+<include file="public@header"/>
+<style>
+    body{
+        background-color: #fff;
+    }
+
+    table td {
+        border:1px solid #ccc;
+        text-align:center;
+    }
+</style>
+</head>
+<body>
+<div class="">
+    <div class="layui-tab layui-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="javascript:;">优惠券列表</a></li>
+            <li><a href="{:url('AdminVoucherRule/add')}">添加优惠券</a></li>
+        </ul>
+    </div>
+    <form class="layui-form layui-form-pane" method="post" action="{:url('AdminVoucherRule/index')}">
+        <div class="layui-inline">
+            优惠金额:
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  name="num" style="width: 200px;"
+                       value="{$param['num']|default=''}" placeholder="请输入金额...">
+            </div>
+            <div class="layui-input-inline">
+                <input type="submit" class="layui-btn" value="搜索"/>
+                <a class="layui-btn layui-btn-danger" href="{:url('AdminVoucherRule/index')}">清空</a>
+            </div>
+        </div>
+    </form>
+    <form class="js-ajax-form layui-form layui-form-pane" action="" method="post" style="margin-top: 10px">
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th width="50">序号</th>
+                <th width="100">规则名称</th>
+                <th width="50">条件金额</th>
+                <th width="50">优惠金额</th>
+                <th width="50">领取方式</th>
+                <th width="50">使用范围</th>
+                <th width="100">创建/更新时间</th>
+                <th width="50">操作</th>
+            </tr>
+            </thead>
+            <tbody class="search-box">
+            <foreach name="data" item="vo">
+                <tr>
+                    <td><b>{$key+1}</b></td>
+                    <td style="text-align: left">{$vo.name}</td>
+                    <td>{$vo.money}</td>
+                    <td>{$vo.num}</td>
+                    <td>{$vo.type_fix}</td>
+                    <td>{$vo.status_fix}</td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$vo.create_time)}
+                        <br>
+                        {:date('Y-m-d H:i:s',$vo.update_time)}
+                    </td>
+                    <td>
+                        <a class="layui-btn layui-btn-xs" style="margin-bottom: 10px;" href="{:url('AdminVoucherRule/add',array('id'=>$vo['id']))}">编 辑</a>
+<!--                        <br>-->
+<!--                        <a class="layui-btn layui-btn-xs layui-btn-danger js-ajax-dialog-btn" data-msg="确定删除吗？" href="{:url('AdminVoucherRule/delete',array('id'=>$vo['id']))}">删 除</a>-->
+<!--                        <br>-->
+<!--                        <a class="layui-btn layui-btn-xs layui-btn-normal" href="{:url('AdminPromotionRule/goods',array('rule_id'=>$vo['id']))}"> 活 动 商 品 </a>-->
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul style="display: none" id="pagination" class="pagination">{$page|default=''}</ul>
+        <div  class="layui-box layui-laypage layui-laypage-default"  id="mypagedata"></div>
+    </form>
+</div>
+<include file="public@footer"/>
+
+<script type="text/javascript">
+    $(function () {
+        //设置分页,原数据的ul id
+        mygetpage('#pagination li');
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => zHQZNf5Mtf5BR9NnQK
+            [sign] => 42bde94edb1ca9a4a5c5691d0c27fa73
+        )
+
+    [time] => 1594457747
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => HMXPjtYYJu23wpSsbg
+            [sign] => 1472fc4ca97a28674b679dc722bcb295
+        )
+
+    [time] => 1594457757
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => yQp84zBrV7MImQQxHJ
+            [sign] => ae3b666b3f5ce2e68f0103656a6a6e86
+        )
+
+    [time] => 1594458172
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => 8KWSsjDQrgrBKRMzgK
+            [sign] => b7d3078976154b38e8dc938c3a042e81
+        )
+
+    [time] => 1594458944
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => MmWxRMVbP4GgYEip6i
+            [sign] => a4a5385cf41f163eae743519214f4eb6
+        )
+
+    [time] => 1594458986
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => b4XsEIZkBh3NemDCy3
+            [sign] => aa93eeae8d368e0150b8bfde2909841b
+        )
+
+    [time] => 1594459000
+)
+stdClass Object
+(
+    [code] => 0
+    [status] => success
+    [msg] => ok
+    [info] => stdClass Object
+        (
+            [uid] => 52
+            [name] => 张三
+            [serviceType] => cron
+            [randomStr] => 8Hj6jM6Ct2sShAERQE
+            [sign] => 7427e545cd7f5bfc242e9b97740939cb
+        )
+
+    [time] => 1594459060
+)

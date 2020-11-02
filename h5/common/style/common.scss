@@ -1,0 +1,24 @@
+/**
+ * @说明：全局样式
+ * 
+ */
+
+
+
+/* 统一所有元素的盒子模型 */
+page, view, scroll-view, swiper, swiper-item, movable-area, movable-view, cover-view, cover-image,
+icon, text, rich-text, progress, burron, checkbox, editor, form, input, label, picker, picker-view, radio,
+slider, switch, textarea, navigator, audio, camera, image, video, live-player, live-pusher, map, canvas,
+web-view, ad, official-account, open-data, barcode, list, cell, recycle-list, waterfall, resresh { 
+	box-sizing: border-box;
+	font-size: 28rpx;
+	color: #333;
+}
+
+/* 强制不换行 */
+.nowrap { text-overflow: ellipsis;overflow: hidden;white-space: nowrap; }
+.nowrap2{ display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden;text-overflow: ellipsis; }
+.nowrap3{ display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;text-overflow: ellipsis; }
+
+/* 强制换行 */
+.iswrap { white-space: normal; word-wrap: break-word; word-break: break-all; }
